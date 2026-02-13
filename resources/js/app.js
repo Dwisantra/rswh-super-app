@@ -1,0 +1,16 @@
+import './bootstrap';
+import { createApp } from 'vue'
+import App from './App.vue'
+import router from './router'
+
+createApp(App)
+  .use(router)
+  .mount('#app')
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(() => console.log('SW registered'))
+      .catch(err => console.error('SW failed', err))
+  })
+}
