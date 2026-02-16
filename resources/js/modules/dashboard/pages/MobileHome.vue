@@ -2,8 +2,10 @@
   <div class="mx-auto min-h-screen max-w-md bg-slate-50 pb-24">
     <section class="rounded-b-[2rem] bg-gradient-to-br from-teal-600 to-cyan-600 px-4 pb-6 pt-7 text-white shadow-lg">
       <div class="flex items-center gap-3">
-        <div class="flex-1 rounded-2xl bg-white/95 px-4 py-3 text-sm font-medium text-slate-500">🔍 Cari layanan kesehatan</div>
-        <div class="grid h-12 w-12 place-items-center rounded-2xl bg-white text-xl text-teal-700">👤</div>
+        <RouterLink to="/cari" class="flex-1 rounded-2xl bg-white/95 px-4 py-3 text-sm font-medium text-slate-500">
+          🔍 Cari layanan kesehatan
+        </RouterLink>
+        <RouterLink to="/profil" class="grid h-12 w-12 place-items-center rounded-2xl bg-white text-xl text-teal-700">👤</RouterLink>
       </div>
 
       <article class="mt-4 rounded-2xl bg-white/15 p-4 backdrop-blur-sm">
@@ -36,7 +38,7 @@
         <article v-for="promo in promos" :key="promo.id" class="rounded-2xl border border-teal-100 bg-gradient-to-r from-teal-50 to-cyan-50 p-4">
           <p class="text-lg font-semibold text-slate-900">{{ promo.title }}</p>
           <p class="mt-1 text-sm text-slate-600">{{ promo.subtitle }}</p>
-          <button class="mt-3 rounded-xl bg-teal-600 px-4 py-2 text-sm font-semibold text-white">{{ promo.cta }}</button>
+          <RouterLink :to="promo.to" class="mt-3 inline-block rounded-xl bg-teal-600 px-4 py-2 text-sm font-semibold text-white">{{ promo.cta }}</RouterLink>
         </article>
       </section>
     </main>
