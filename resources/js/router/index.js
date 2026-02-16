@@ -8,8 +8,10 @@ import BedAvailability from '../modules/dashboard/pages/BedAvailability.vue'
 import DoctorSchedule from '../modules/dashboard/pages/DoctorSchedule.vue'
 import FamilyMembers from '../modules/dashboard/pages/FamilyMembers.vue'
 import AddFamilyMember from '../modules/dashboard/pages/AddFamilyMember.vue'
+import NewPatientRegistration from '../modules/dashboard/pages/NewPatientRegistration.vue'
 import RegistrationPage from '../modules/dashboard/pages/RegistrationPage.vue'
 import ProfilePage from '../modules/dashboard/pages/ProfilePage.vue'
+import PromoPage from '../modules/dashboard/pages/PromoPage.vue'
 import MobilePlaceholder from '../modules/dashboard/pages/MobilePlaceholder.vue'
 import NotFound from '../modules/common/pages/NotFound.vue'
 
@@ -20,12 +22,13 @@ const routes = [
   { path: '/profil', name: 'profile', component: ProfilePage },
   { path: '/keluarga', name: 'family-members', component: FamilyMembers },
   { path: '/keluarga/tambah', name: 'family-add', component: AddFamilyMember },
+  { path: '/pasien-baru', name: 'new-patient-registration', component: NewPatientRegistration },
   { path: '/pendaftaran', name: 'registration', component: RegistrationPage },
   { path: '/ticket', name: 'queue-ticket', component: QueueTicket },
   { path: '/jadwal-dokter', name: 'doctor-schedule', component: DoctorSchedule },
   { path: '/bmi', name: 'bmi-calculator', component: BmiCalculator },
   { path: '/tempat-tidur', name: 'bed-availability', component: BedAvailability },
-  { path: '/promo', name: 'promo', component: MobilePlaceholder, meta: { title: 'Promo' } },
+  { path: '/promo', name: 'promo', component: PromoPage },
   { path: '/chat', name: 'chat', component: MobilePlaceholder, meta: { title: 'Chat' } },
   { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound }
 ]

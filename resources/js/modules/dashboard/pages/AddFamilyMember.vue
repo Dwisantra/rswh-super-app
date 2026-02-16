@@ -30,7 +30,13 @@
       <article v-if="checked && !matchedPatient" class="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-center">
         <p class="text-2xl">⚠️</p>
         <p class="mt-2 text-xl font-bold text-slate-900">Data tidak ditemukan</p>
-        <p class="mt-1 text-sm text-slate-600">Pastikan nomor RM dan tanggal lahir yang Anda inputkan sudah benar.</p>
+        <p class="mt-1 text-sm text-slate-600">Jika belum punya No RM, silakan daftar pasien baru terlebih dahulu.</p>
+        <RouterLink
+          class="mt-4 inline-block rounded-xl bg-teal-600 px-4 py-2 text-sm font-semibold text-white"
+          :to="{ path: '/pasien-baru', query: { relation: form.relation, mrn: form.mrn, birthDate: form.birthDate } }"
+        >
+          Daftar Pasien Baru
+        </RouterLink>
       </article>
 
       <article v-if="matchedPatient" class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
@@ -73,6 +79,15 @@ const getStoredMembers = () => {
   }
 }
 
+const getSimrsPatients = () => {
+  try {
+    const extra = JSON.parse(localStorage.getItem('simrs_patients_extra') || '[]')
+    return [...simrsPatients, ...extra]
+  } catch (_) {
+    return simrsPatients
+  }
+}
+
 const isDuplicate = computed(() => {
   if (!matchedPatient.value) return false
   return getStoredMembers().some(
@@ -82,7 +97,7 @@ const isDuplicate = computed(() => {
 
 const checkPatient = () => {
   checked.value = true
-  matchedPatient.value = simrsPatients.find((item) => item.mrn === form.mrn && item.birthDate === form.birthDate) || null
+  matchedPatient.value = getSimrsPatients().find((item) => item.mrn === form.mrn && item.birthDate === form.birthDate) || null
 }
 
 const saveMember = () => {

@@ -21,6 +21,8 @@
     </section>
 
     <main class="-mt-3 space-y-4 px-4">
+      <PhotoCarousel :slides="homeBanners" />
+
       <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <div class="flex items-start justify-between gap-3">
           <div>
@@ -39,7 +41,10 @@
       <ServiceMenuGrid :sections="filteredSections" />
 
       <section class="space-y-3 pb-2">
-        <h2 class="text-2xl font-bold text-slate-900">Info & Promo Kesehatan</h2>
+        <div class="flex items-center justify-between">
+          <h2 class="text-2xl font-bold text-slate-900">Info & Promo Kesehatan</h2>
+          <RouterLink to="/promo" class="text-sm font-semibold text-teal-700">Lihat semua</RouterLink>
+        </div>
         <article v-for="promo in promos" :key="promo.id" class="rounded-2xl border border-teal-100 bg-gradient-to-r from-teal-50 to-cyan-50 p-4">
           <p class="text-lg font-semibold text-slate-900">{{ promo.title }}</p>
           <p class="mt-1 text-sm text-slate-600">{{ promo.subtitle }}</p>
@@ -55,8 +60,9 @@
 <script setup>
 import { computed, ref } from 'vue'
 import MobileBottomNav from '../components/MobileBottomNav.vue'
+import PhotoCarousel from '../components/PhotoCarousel.vue'
 import ServiceMenuGrid from '../components/ServiceMenuGrid.vue'
-import { menuSections, patientSnapshot, promos } from '../data/mobileDashboardData'
+import { homeBanners, menuSections, patientSnapshot, promos } from '../data/mobileDashboardData'
 
 const searchQuery = ref('')
 

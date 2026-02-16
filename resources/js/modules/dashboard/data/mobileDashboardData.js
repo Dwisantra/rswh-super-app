@@ -5,6 +5,42 @@ export const patientSnapshot = {
   clinic: 'Bedah Digestif'
 }
 
+export const homeBanners = [
+  {
+    id: 1,
+    title: 'Siap Ceria, layanan kesehatan dalam genggaman Anda',
+    subtitle: 'Cepat, efisien, ramah, ikhlas dan aman.',
+    image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    id: 2,
+    title: 'Akses pendaftaran pasien & keluarga lebih mudah',
+    subtitle: 'Cek data SIMRS dulu untuk cegah duplikasi data.',
+    image: 'https://images.unsplash.com/photo-1666214280391-8ff5bd3c0bf0?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    id: 3,
+    title: 'Pantau jadwal dokter per tanggal dan klinik',
+    subtitle: 'Temukan layanan yang tepat sesuai kebutuhan.',
+    image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80'
+  }
+]
+
+export const promoBanners = [
+  {
+    id: 1,
+    title: 'Paket MCU Keluarga',
+    subtitle: 'Diskon hingga 20% untuk pendaftaran via aplikasi.',
+    image: 'https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    id: 2,
+    title: 'Promo Konsultasi Spesialis',
+    subtitle: 'Prioritas jadwal untuk pasien terverifikasi.',
+    image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80'
+  }
+]
+
 export const menuSections = [
   {
     id: 'utama',
