@@ -3,33 +3,66 @@
 namespace Modules\Auth\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+        $validated = $request->validate([
+            'identifier' => 'required|string',
+            'password' => 'required|string',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::query()
+            ->where('email', $validated['identifier'])
+            ->orWhere('nik', $validated['identifier'])
+            ->orWhere('norm', $validated['identifier'])
+            ->first();
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($validated['password'], $user->password)) {
             return response()->json([
-                'message' => 'Email atau password salah'
+                'message' => 'Identitas/NIK/No RM atau kata sandi salah',
             ], 401);
         }
 
-        $token = $user->createToken('api-token')->plainTextToken;
+        $token = $user->createToken('patient-app-token')->plainTextToken;
 
         return response()->json([
             'token' => $token,
-            'user'  => $user
+            'user' => $user,
         ]);
+    }
+
+    public function register(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|string|email|max:255|unique:users,email',
+            'nik' => 'required|string|min:8|max:32|unique:users,nik',
+            'norm' => 'nullable|string|min:4|max:32|unique:users,norm',
+            'family_code' => 'nullable|string|max:32',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'] ?? sprintf('%s@pasien.local', $validated['nik']),
+            'nik' => $validated['nik'],
+            'norm' => $validated['norm'] ?? null,
+            'family_code' => $validated['family_code'] ?? null,
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        $token = $user->createToken('patient-app-token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Pendaftaran berhasil',
+            'token' => $token,
+            'user' => $user,
+        ], 201);
     }
 
     public function me(Request $request)
@@ -39,91 +72,10 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $request->user()->currentAccessToken()?->delete();
 
         return response()->json([
-            'message' => 'Logout berhasil'
+            'message' => 'Logout berhasil',
         ]);
     }
-
-    /**
-     * Pendaftaran pasien (user baru).
-     */
-    public function register(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-        ], [
-            'name.required' => 'Nama lengkap wajib diisi.',
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'email.unique' => 'Email ini sudah terdaftar.',
-            'password.required' => 'Kata sandi wajib diisi.',
-            'password.min' => 'Kata sandi minimal 8 karakter.',
-            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
-        ]);
-
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-        ]);
-
-        $token = $user->createToken('api-token')->plainTextToken;
-
-        return response()->json([
-            'message' => 'Pendaftaran berhasil',
-            'token' => $token,
-            'user' => $user,
-        ], 201);
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        return view('auth::index');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('auth::create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request) {}
-
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('auth::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        return view('auth::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id) {}
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id) {}
 }

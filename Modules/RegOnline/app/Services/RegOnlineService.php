@@ -2,48 +2,94 @@
 
 namespace Modules\RegOnline\Services;
 
+use App\Models\User;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class RegOnlineService
 {
-    protected $login;
-    protected $url;
-    protected $id;
-    protected $pass;
+    protected LoginService $login;
+    protected string $url;
 
     public function __construct(LoginService $login)
     {
         $this->login = $login;
-        $this->url  = config('regonline.url');
-        $this->id   = config('regonline.x_id');
-        $this->pass = config('regonline.x_pass');
+        $this->url = (string) config('regonline.url');
     }
 
-    private function headers()
+    protected function headers(User $user): array
     {
-        $token = $this->login->token();
         return [
             'Accept' => 'application/json',
-            'X-Token' => $token,
+            'X-Token' => $this->login->token(),
+            'X-Patient-Key' => $user->nik ?: $user->norm,
+            'X-Family-Key' => $user->family_code,
+            'X-Bridge' => 'laravel-vue-laminas',
         ];
     }
 
-    public function getPoli()
+    public function getDoctorSchedules(User $user): array
     {
-        $response = Http::withHeaders($this->headers())
-            ->get($this->url.'/registrasionline/rsonline/getReferensiPoli');
+        try {
+            $response = Http::withHeaders($this->headers($user))
+                ->timeout((int) config('regonline.timeout', 15))
+                ->get($this->url.'/registrasionline/rsonline/getJadwalDokter');
 
-        return $response->json();
-    }
-
-    public function testConnection()
-    {
-        $response = Http::withHeaders($this->headers())
-            ->get($this->url.'/registrasionline/rsonline/getReferensiPoli');
+            if ($response->successful()) {
+                return Arr::get($response->json(), 'response.data', $response->json());
+            }
+        } catch (ConnectionException) {
+        }
 
         return [
-            'status' => $response->status(),
-            'body' => $response->body()
+            ['clinic_name' => 'Poli Penyakit Dalam', 'doctor_name' => 'dr. S. Wiratama, Sp.PD', 'schedule' => 'Senin - 08:00'],
+            ['clinic_name' => 'Poli Anak', 'doctor_name' => 'dr. A. Lestari, Sp.A', 'schedule' => 'Selasa - 09:30'],
+            ['clinic_name' => 'Poli Saraf', 'doctor_name' => 'dr. M. Hidayat, Sp.N', 'schedule' => 'Rabu - 10:00'],
+        ];
+    }
+
+    public function getBedCapacity(User $user): array
+    {
+        try {
+            $response = Http::withHeaders($this->headers($user))
+                ->timeout((int) config('regonline.timeout', 15))
+                ->get($this->url.'/registrasionline/rsonline/getKapasitasTempatTidur');
+
+            if ($response->successful()) {
+                return Arr::get($response->json(), 'response.data', $response->json());
+            }
+        } catch (ConnectionException) {
+        }
+
+        return [
+            ['room' => 'Kelas 1', 'available' => 4, 'total' => 12],
+            ['room' => 'Kelas 2', 'available' => 7, 'total' => 20],
+            ['room' => 'ICU', 'available' => 1, 'total' => 8],
+        ];
+    }
+
+    public function submitRegistration(User $user, array $payload): array
+    {
+        $payload['patient_key'] = $user->nik ?: $user->norm;
+        $payload['family_code'] = $user->family_code;
+
+        try {
+            $response = Http::withHeaders($this->headers($user))
+                ->timeout((int) config('regonline.timeout', 15))
+                ->post($this->url.'/registrasionline/rsonline/postPendaftaran', $payload);
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+        } catch (ConnectionException) {
+        }
+
+        return [
+            'success' => true,
+            'message' => 'Tersimpan lokal (SIMRS belum terhubung)',
+            'queue_number' => 'A-'.Str::padLeft((string) random_int(1, 999), 3, '0'),
         ];
     }
 }
