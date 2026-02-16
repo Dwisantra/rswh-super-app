@@ -1,0 +1,11 @@
+{
+    "name": "RegOnline",
+    "alias": "regonline",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\RegOnline\\Providers\\RegOnlineServiceProvider"
+    ],
+    "files": []
+}

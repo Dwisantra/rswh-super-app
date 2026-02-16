@@ -1,0 +1,111 @@
+/**
+ * Reusable Auth Styles
+ * Gunakan class ini di halaman login, register, forgot-password, dll.
+ */
+
+@layer components {
+  /* Layout auth: fullscreen centered card */
+  .auth-page {
+    @apply min-h-screen flex items-center justify-center px-4 py-8 bg-slate-50;
+  }
+
+  .auth-card {
+    @apply w-full max-w-md bg-white rounded-2xl shadow-sm border border-slate-200/80 p-8;
+  }
+
+  .auth-card--wide {
+    @apply max-w-lg;
+  }
+
+  /* Typography */
+  .auth-title {
+    @apply text-2xl font-semibold text-slate-800 tracking-tight;
+  }
+
+  .auth-subtitle {
+    @apply text-slate-500 text-sm mt-1;
+  }
+
+  .auth-heading {
+    @apply mb-6;
+  }
+
+  /* Form */
+  .auth-form {
+    @apply space-y-5;
+  }
+
+  .auth-field {
+    @apply space-y-1.5;
+  }
+
+  .auth-label {
+    @apply block text-sm font-medium text-slate-700;
+  }
+
+  .auth-input {
+    @apply w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-800
+           placeholder-slate-400
+           focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500
+           transition-colors;
+  }
+
+  .auth-input--error {
+    @apply border-red-300 focus:ring-red-500/20 focus:border-red-500;
+  }
+
+  .auth-error {
+    @apply text-sm text-red-600;
+  }
+
+  .auth-hint {
+    @apply text-sm text-slate-500;
+  }
+
+  /* Buttons */
+  .auth-btn {
+    @apply w-full py-2.5 rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .auth-btn--primary {
+    @apply auth-btn bg-sky-600 text-white hover:bg-sky-700 focus:ring-sky-500;
+  }
+
+  .auth-btn--secondary {
+    @apply auth-btn bg-slate-100 text-slate-700 hover:bg-slate-200 focus:ring-slate-400;
+  }
+
+  .auth-btn--ghost {
+    @apply auth-btn text-slate-600 hover:bg-slate-100 focus:ring-slate-300;
+  }
+
+  /* Link */
+  .auth-link {
+    @apply text-sky-600 hover:text-sky-700 font-medium text-sm transition-colors;
+  }
+
+  .auth-divider {
+    @apply relative my-6;
+  }
+
+  .auth-divider__line {
+    @apply absolute inset-0 flex items-center;
+  }
+
+  .auth-divider__line span {
+    @apply w-full border-t border-slate-200;
+  }
+
+  .auth-divider__text {
+    @apply relative flex justify-center text-sm text-slate-500;
+  }
+
+  .auth-divider__text span {
+    @apply bg-white px-3;
+  }
+
+  /* Footer link (e.g. Belum punya akun? Daftar) */
+  .auth-footer {
+    @apply mt-6 text-center text-sm text-slate-600;
+  }
+}

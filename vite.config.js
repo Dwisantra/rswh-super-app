@@ -12,6 +12,11 @@ export default defineConfig({
         vue(),
         tailwindcss(),
     ],
+    resolve: {
+        alias: {
+        '@': '/resources/js',
+        },
+    },
     define: {
         __APP_NAME__: JSON.stringify(process.env.APP_NAME)
     },

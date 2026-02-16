@@ -1,22 +1,20 @@
 <?php
 
-namespace Modules\Auth\Providers;
+namespace Modules\RegOnline\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use Illuminate\Support\Facades\Route;
-use Modules\Auth\Http\Middleware\MobileOnly;
 
-class AuthServiceProvider extends ServiceProvider
+class RegOnlineServiceProvider extends ServiceProvider
 {
     use PathNamespace;
 
-    protected string $name = 'Auth';
+    protected string $name = 'RegOnline';
 
-    protected string $nameLower = 'auth';
+    protected string $nameLower = 'regonline';
 
     /**
      * Boot the application events.
@@ -29,7 +27,11 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
-        Route::aliasMiddleware('mobile.only', MobileOnly::class);
+        
+        $this->mergeConfigFrom(
+            module_path('RegOnline', 'Config/config.php'),
+            'regonline'
+        );
     }
 
     /**
