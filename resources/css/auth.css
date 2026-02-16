@@ -68,15 +68,15 @@
   }
 
   .auth-btn--primary {
-    @apply auth-btn bg-sky-600 text-white hover:bg-sky-700 focus:ring-sky-500;
+    @apply w-full py-2.5 rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-sky-600 text-white hover:bg-sky-700 focus:ring-sky-500;
   }
 
   .auth-btn--secondary {
-    @apply auth-btn bg-slate-100 text-slate-700 hover:bg-slate-200 focus:ring-slate-400;
+    @apply w-full py-2.5 rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-slate-100 text-slate-700 hover:bg-slate-200 focus:ring-slate-400;
   }
 
   .auth-btn--ghost {
-    @apply auth-btn text-slate-600 hover:bg-slate-100 focus:ring-slate-300;
+    @apply w-full py-2.5 rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none text-slate-600 hover:bg-slate-100 focus:ring-slate-300;
   }
 
   /* Link */
