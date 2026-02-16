@@ -2,9 +2,14 @@
   <div class="mx-auto min-h-screen max-w-md bg-slate-50 pb-24">
     <section class="rounded-b-[2rem] bg-gradient-to-br from-teal-600 to-cyan-600 px-4 pb-6 pt-7 text-white shadow-lg">
       <div class="flex items-center gap-3">
-        <RouterLink to="/cari" class="flex-1 rounded-2xl bg-white/95 px-4 py-3 text-sm font-medium text-slate-500">
-          🔍 Cari layanan kesehatan
-        </RouterLink>
+        <div class="flex-1 rounded-2xl bg-white/95 px-4 py-2.5">
+          <input
+            v-model.trim="searchQuery"
+            type="text"
+            placeholder="🔍 Cari layanan kesehatan"
+            class="w-full bg-transparent text-sm font-medium text-slate-700 outline-none placeholder:text-slate-500"
+          />
+        </div>
         <RouterLink to="/profil" class="grid h-12 w-12 place-items-center rounded-2xl bg-white text-xl text-teal-700">👤</RouterLink>
       </div>
 
@@ -31,7 +36,7 @@
         </div>
       </article>
 
-      <ServiceMenuGrid :sections="menuSections" />
+      <ServiceMenuGrid :sections="filteredSections" />
 
       <section class="space-y-3 pb-2">
         <h2 class="text-2xl font-bold text-slate-900">Info & Promo Kesehatan</h2>
@@ -48,7 +53,27 @@
 </template>
 
 <script setup>
+import { computed, ref } from 'vue'
 import MobileBottomNav from '../components/MobileBottomNav.vue'
 import ServiceMenuGrid from '../components/ServiceMenuGrid.vue'
 import { menuSections, patientSnapshot, promos } from '../data/mobileDashboardData'
+
+const searchQuery = ref('')
+
+const filteredSections = computed(() => {
+  if (!searchQuery.value) return menuSections
+
+  const keyword = searchQuery.value.toLowerCase()
+
+  return menuSections
+    .map((section) => ({
+      ...section,
+      items: section.items.filter((item) => {
+        const label = item.label.toLowerCase()
+        const subtitle = item.subtitle.toLowerCase()
+        return label.includes(keyword) || subtitle.includes(keyword)
+      })
+    }))
+    .filter((section) => section.items.length > 0)
+})
 </script>

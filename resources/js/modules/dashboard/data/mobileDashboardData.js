@@ -8,32 +8,32 @@ export const patientSnapshot = {
 export const menuSections = [
   {
     id: 'utama',
-    title: 'Layanan Utama',
-    description: 'Akses cepat fitur yang paling sering dipakai.',
+    title: 'Menu Pelayanan',
+    description: 'Gunakan fitur yang dibutuhkan tanpa input berulang.',
     columns: 2,
     items: [
       {
         id: 1,
-        label: 'Tiket Antrian',
-        subtitle: 'Lihat nomor & detail kunjungan',
-        icon: '🎟️',
-        to: '/ticket',
+        label: 'Keluarga',
+        subtitle: 'Kelola pasien/anggota keluarga',
+        icon: '👨‍👩‍👧‍👦',
+        to: '/keluarga',
         tone: 'bg-sky-50 text-sky-700 border-sky-100'
       },
       {
         id: 2,
-        label: 'Jadwal Dokter',
-        subtitle: 'Per hari & ruangan/poli',
-        icon: '🩺',
-        to: '/jadwal-dokter',
+        label: 'Pendaftaran',
+        subtitle: 'Daftar berobat tanpa spam data',
+        icon: '📝',
+        to: '/pendaftaran',
         tone: 'bg-teal-50 text-teal-700 border-teal-100'
       },
       {
         id: 3,
-        label: 'Kalkulator BMI',
-        subtitle: 'Pantau berat badan ideal',
-        icon: '⚖️',
-        to: '/bmi',
+        label: 'Jadwal Dokter',
+        subtitle: 'Per tanggal & klinik',
+        icon: '🩺',
+        to: '/jadwal-dokter',
         tone: 'bg-emerald-50 text-emerald-700 border-emerald-100'
       },
       {
@@ -46,6 +46,14 @@ export const menuSections = [
       }
     ]
   }
+]
+
+export const relationOptions = ['Ayah', 'Ibu', 'Suami', 'Istri', 'Anak', 'Saudara', 'Lainnya']
+
+export const simrsPatients = [
+  { mrn: '000123456', birthDate: '1990-05-12', name: 'OKVI DWI SANTRA', nik: '3175011205900001' },
+  { mrn: '000778899', birthDate: '1987-09-03', name: 'RINA WULANDARI', nik: '3175010309870002' },
+  { mrn: '000445566', birthDate: '2012-01-20', name: 'RAFA ALFARIZI', nik: '3175012001120003' }
 ]
 
 export const promos = [
@@ -84,15 +92,13 @@ export const bedAvailability = [
   { id: 4, room: 'Kenanga 1', class: 'ICU', available: 0, total: 6 }
 ]
 
-export const dayFilters = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
-
 export const doctorSchedules = [
-  { id: 1, doctor: 'dr. Rina Mardiana, Sp.PD', day: 'Senin', time: '08:00 - 11:00', poli: 'Penyakit Dalam', room: 'Poli A1' },
-  { id: 2, doctor: 'dr. Hendra Saputra, Sp.B', day: 'Senin', time: '13:00 - 16:00', poli: 'Bedah Umum', room: 'Poli B2' },
-  { id: 3, doctor: 'dr. Budi Santoso, Sp.JP', day: 'Selasa', time: '09:00 - 12:00', poli: 'Jantung', room: 'Poli C1' },
-  { id: 4, doctor: 'dr. Anita Pratiwi, Sp.M', day: 'Rabu', time: '10:00 - 13:00', poli: 'Mata', room: 'Poli D3' },
-  { id: 5, doctor: 'dr. Kamal Agung Wijayana, Sp.B(K)KBD', day: 'Rabu', time: '17:00 - 18:00', poli: 'Bedah Digestif', room: 'Poli B3' },
-  { id: 6, doctor: 'dr. Dina Rahmawati, Sp.OG', day: 'Kamis', time: '08:00 - 12:00', poli: 'Kandungan', room: 'Poli E1' },
-  { id: 7, doctor: 'dr. Rahmat Hidayat, Sp.A', day: 'Jumat', time: '13:00 - 16:00', poli: 'Anak', room: 'Poli F1' },
-  { id: 8, doctor: 'dr. Lisa Kurnia, Sp.THT', day: 'Sabtu', time: '09:00 - 11:00', poli: 'THT', room: 'Poli G2' }
+  { id: 1, doctor: 'dr. Rina Mardiana, Sp.PD', date: '2025-11-24', time: '08:00 - 11:00', clinic: 'Penyakit Dalam' },
+  { id: 2, doctor: 'dr. Hendra Saputra, Sp.B', date: '2025-11-24', time: '13:00 - 16:00', clinic: 'Bedah Umum' },
+  { id: 3, doctor: 'dr. Budi Santoso, Sp.JP', date: '2025-11-25', time: '09:00 - 12:00', clinic: 'Jantung' },
+  { id: 4, doctor: 'dr. Anita Pratiwi, Sp.M', date: '2025-11-26', time: '10:00 - 13:00', clinic: 'Mata' },
+  { id: 5, doctor: 'dr. Kamal Agung Wijayana, Sp.B(K)KBD', date: '2025-11-26', time: '17:00 - 18:00', clinic: 'Bedah Digestif' },
+  { id: 6, doctor: 'dr. Dina Rahmawati, Sp.OG', date: '2025-11-27', time: '08:00 - 12:00', clinic: 'Kandungan' },
+  { id: 7, doctor: 'dr. Rahmat Hidayat, Sp.A', date: '2025-11-28', time: '13:00 - 16:00', clinic: 'Anak' },
+  { id: 8, doctor: 'dr. Lisa Kurnia, Sp.THT', date: '2025-11-29', time: '09:00 - 11:00', clinic: 'THT' }
 ]
