@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Modules\RegOnline\Services\RegOnlineService;
 
 class AuthController extends Controller
 {
+    public function __construct(protected RegOnlineService $regonline) {}
+
     public function login(Request $request)
     {
         $validated = $request->validate([
@@ -47,11 +50,22 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
+        $simrsPatient = $this->regonline->findPatientByNik($validated['nik']);
+        $isExistingPatient = $simrsPatient['found'];
+
+        $resolvedNorm = $validated['norm']
+            ?? $simrsPatient['norm']
+            ?? null;
+
+        if ($resolvedNorm && User::where('norm', $resolvedNorm)->exists()) {
+            $resolvedNorm = null;
+        }
+
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'] ?? sprintf('%s@pasien.local', $validated['nik']),
             'nik' => $validated['nik'],
-            'norm' => $validated['norm'] ?? null,
+            'norm' => $resolvedNorm,
             'family_code' => $validated['family_code'] ?? null,
             'password' => Hash::make($validated['password']),
         ]);
@@ -60,6 +74,8 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Pendaftaran berhasil',
+            'patient_status' => $isExistingPatient ? 'pasien_lama' : 'pasien_baru',
+            'simrs_patient_found' => $isExistingPatient,
             'token' => $token,
             'user' => $user,
         ], 201);

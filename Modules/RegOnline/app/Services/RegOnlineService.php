@@ -19,14 +19,60 @@ class RegOnlineService
         $this->url = (string) config('regonline.url');
     }
 
-    protected function headers(User $user): array
+    protected function baseHeaders(): array
     {
         return [
             'Accept' => 'application/json',
             'X-Token' => $this->login->token(),
+            'X-Bridge' => 'laravel-vue-laminas',
+        ];
+    }
+
+    protected function headers(User $user): array
+    {
+        return [
+            ...$this->baseHeaders(),
             'X-Patient-Key' => $user->nik ?: $user->norm,
             'X-Family-Key' => $user->family_code,
-            'X-Bridge' => 'laravel-vue-laminas',
+        ];
+    }
+
+    public function findPatientByNik(string $nik): array
+    {
+        try {
+            $response = Http::withHeaders($this->baseHeaders())
+                ->timeout((int) config('regonline.timeout', 15))
+                ->get($this->url.config('regonline.nik_lookup_path', '/registrasionline/rsonline/getPasienByNIK'), [
+                    'nik' => $nik,
+                ]);
+
+            if ($response->successful()) {
+                $json = $response->json();
+                $data = Arr::get($json, 'response.data', Arr::get($json, 'response', $json));
+
+                if (is_array($data)) {
+                    $patient = Arr::isAssoc($data) ? $data : ($data[0] ?? []);
+                    $resolvedNorm = Arr::get($patient, 'norm')
+                        ?? Arr::get($patient, 'no_rm')
+                        ?? Arr::get($patient, 'noRM')
+                        ?? Arr::get($patient, 'nomor_rm');
+
+                    if (! empty($patient) || ! empty($resolvedNorm)) {
+                        return [
+                            'found' => true,
+                            'norm' => $resolvedNorm,
+                            'data' => $patient,
+                        ];
+                    }
+                }
+            }
+        } catch (ConnectionException) {
+        }
+
+        return [
+            'found' => false,
+            'norm' => null,
+            'data' => null,
         ];
     }
 
