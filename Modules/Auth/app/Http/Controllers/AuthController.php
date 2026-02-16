@@ -44,14 +44,15 @@ class AuthController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'nullable|string|email|max:255|unique:users,email',
-            'nik' => 'required|string|min:8|max:32|unique:users,nik',
-            'norm' => 'nullable|string|min:4|max:32|unique:users,norm',
+            'nik' => 'required|string|min:16|max:16|unique:users,nik',
+            'norm' => 'nullable|string|min:6|max:8|unique:users,norm',
             'family_code' => 'nullable|string|max:32',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         $simrsPatient = $this->regonline->findPatientByNik($validated['nik']);
-        $isExistingPatient = $simrsPatient['found'];
+        // var_dump($simrsPatient['status']);
+        $isExistingPatient = $simrsPatient['status'] == 200;
 
         $resolvedNorm = $validated['norm']
             ?? $simrsPatient['norm']

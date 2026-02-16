@@ -11,11 +11,11 @@
         </div>
         <div>
           <label class="text-sm font-medium text-slate-700">NIK</label>
-          <input v-model="form.nik" type="text" class="mt-1 w-full rounded-xl border border-slate-200 px-4 py-2.5 focus:border-sky-500 focus:outline-none" />
+          <input v-model="form.nik" type="text" maxlength="16" inputmode="numeric" @input="onlyNumberNIK" class="mt-1 w-full rounded-xl border border-slate-200 px-4 py-2.5 focus:border-sky-500 focus:outline-none" />
         </div>
         <div>
           <label class="text-sm font-medium text-slate-700">No RM (opsional)</label>
-          <input v-model="form.norm" type="text" class="mt-1 w-full rounded-xl border border-slate-200 px-4 py-2.5 focus:border-sky-500 focus:outline-none" />
+          <input v-model="form.norm" type="text" maxlength="6" inputmode="numeric" @input="limitNorm" class="mt-1 w-full rounded-xl border border-slate-200 px-4 py-2.5 focus:border-sky-500 focus:outline-none" />
         </div>
         <div>
           <label class="text-sm font-medium text-slate-700">Kode Keluarga (opsional)</label>
@@ -68,9 +68,21 @@ const form = reactive({
   password_confirmation: ''
 })
 
+function onlyNumberNIK(e) {
+  form.nik = e.target.value
+    .replace(/\D/g, '')
+    .slice(0, 16);
+}
+
+function limitNorm(e) {
+  form.norm = e.target.value
+    .replace(/\D/g, '')
+    .slice(0, 6);
+}
+
 async function submit() {
-  error.value = ''
   loading.value = true
+  error.value = ''
 
   try {
     const payload = { ...form, email: form.email || null, norm: form.norm || null, family_code: form.family_code || null }

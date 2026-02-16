@@ -7,7 +7,7 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
-
+use Illuminate\Support\Facades\Cache;
 class RegOnlineService
 {
     protected LoginService $login;
@@ -19,12 +19,31 @@ class RegOnlineService
         $this->url = (string) config('regonline.url');
     }
 
+    private function getRegOnlineToken()
+    {
+        return Cache::remember('simrs_plugin_token', 3500, function () {
+            $response = Http::withHeaders([
+                'Accept' => '*/*'
+            ])
+            ->attach('username', config('regonline.x_id'))
+            ->attach('password', config('regonline.x_pass'))
+            ->post($this->url.'/registrasionline/plugins/getToken');
+
+            $json = $response->json();
+
+            if (!isset($json['response']['token'])) {
+                throw new \Exception('Token tidak ditemukan: '.$response->body());
+            }
+
+            return $json['response']['token'];
+        });
+    }
+
     protected function baseHeaders(): array
     {
         return [
             'Accept' => 'application/json',
-            'X-Token' => $this->login->token(),
-            'X-Bridge' => 'laravel-vue-laminas',
+            'X-Token' => $this->getRegOnlineToken(),
         ];
     }
 
@@ -42,37 +61,15 @@ class RegOnlineService
         try {
             $response = Http::withHeaders($this->baseHeaders())
                 ->timeout((int) config('regonline.timeout', 15))
-                ->get($this->url.config('regonline.nik_lookup_path', '/registrasionline/rsonline/getPasienByNIK'), [
-                    'nik' => $nik,
+                ->get($this->url.'/registrasionline/plugins/getIdentitasPasien', [
+                    'NIK' => $nik
                 ]);
-
-            if ($response->successful()) {
-                $json = $response->json();
-                $data = Arr::get($json, 'response.data', Arr::get($json, 'response', $json));
-
-                if (is_array($data)) {
-                    $patient = Arr::isAssoc($data) ? $data : ($data[0] ?? []);
-                    $resolvedNorm = Arr::get($patient, 'norm')
-                        ?? Arr::get($patient, 'no_rm')
-                        ?? Arr::get($patient, 'noRM')
-                        ?? Arr::get($patient, 'nomor_rm');
-
-                    if (! empty($patient) || ! empty($resolvedNorm)) {
-                        return [
-                            'found' => true,
-                            'norm' => $resolvedNorm,
-                            'data' => $patient,
-                        ];
-                    }
-                }
-            }
         } catch (ConnectionException) {
         }
 
         return [
-            'found' => false,
-            'norm' => null,
-            'data' => null,
+            'status' => $response->status(),
+            'body' => $response->body()
         ];
     }
 
