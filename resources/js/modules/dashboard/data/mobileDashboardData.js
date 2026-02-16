@@ -1,42 +1,65 @@
-export const serviceMenus = [
+export const patientSnapshot = {
+  name: 'Okvi Dwi Santra',
+  mrn: '000123456',
+  nextVisit: 'Rabu, 26 Nov 2025 · 17:00',
+  clinic: 'Bedah Digestif'
+}
+
+export const menuSections = [
   {
-    id: 1,
-    label: 'Tiket Antrian',
-    description: 'Lihat nomor antrian dan detail kunjungan',
-    icon: '🎟️',
-    to: '/ticket',
-    color: 'bg-rose-100 text-rose-700'
-  },
-  {
-    id: 2,
-    label: 'Kalkulator BMI',
-    description: 'Hitung indeks massa tubuh secara cepat',
-    icon: '⚖️',
-    to: '/bmi',
-    color: 'bg-emerald-100 text-emerald-700'
-  },
-  {
-    id: 3,
-    label: 'Tempat Tidur',
-    description: 'Pantau ketersediaan kamar rawat inap',
-    icon: '🛏️',
-    to: '/tempat-tidur',
-    color: 'bg-sky-100 text-sky-700'
+    id: 'utama',
+    title: 'Layanan Utama',
+    description: 'Akses cepat fitur yang paling sering dipakai.',
+    columns: 2,
+    items: [
+      {
+        id: 1,
+        label: 'Tiket Antrian',
+        subtitle: 'Lihat nomor & detail kunjungan',
+        icon: '🎟️',
+        to: '/ticket',
+        tone: 'bg-sky-50 text-sky-700 border-sky-100'
+      },
+      {
+        id: 2,
+        label: 'Kalkulator BMI',
+        subtitle: 'Pantau berat badan ideal',
+        icon: '⚖️',
+        to: '/bmi',
+        tone: 'bg-emerald-50 text-emerald-700 border-emerald-100'
+      },
+      {
+        id: 3,
+        label: 'Tempat Tidur',
+        subtitle: 'Cek ketersediaan rawat inap',
+        icon: '🛏️',
+        to: '/tempat-tidur',
+        tone: 'bg-cyan-50 text-cyan-700 border-cyan-100'
+      },
+      {
+        id: 4,
+        label: 'Riwayat Kunjungan',
+        subtitle: 'Segera hadir',
+        icon: '📄',
+        to: '/promo',
+        tone: 'bg-violet-50 text-violet-700 border-violet-100'
+      }
+    ]
   }
 ]
 
 export const promos = [
   {
     id: 1,
-    title: 'Promo Cek Kesehatan',
-    subtitle: 'Paket medical check-up hemat untuk keluarga',
-    cta: 'Lihat promo'
+    title: 'Paket Cek Jantung',
+    subtitle: 'Diskon 20% untuk pasien usia 45+ tahun.',
+    cta: 'Lihat Detail'
   },
   {
     id: 2,
-    title: 'Diskon Konsultasi Spesialis',
-    subtitle: 'Potongan biaya konsultasi hingga 20%',
-    cta: 'Ambil voucher'
+    title: 'Konsultasi Gizi Keluarga',
+    subtitle: 'Gratis konsultasi awal untuk 50 pendaftar pertama.',
+    cta: 'Daftar Sekarang'
   }
 ]
 
@@ -46,9 +69,9 @@ export const ticketData = {
   patientName: 'OKVI DWI SANTRA',
   clinicName: 'BEDAH DIGESTIF',
   bookingCode: '2511260617',
-  clinicHour: '17:00-18:00',
+  clinicHour: '17:00 - 18:00',
   serviceDate: '26 November 2025',
-  estimatedService: '17:00-18:00',
+  estimatedService: '17:00 - 18:00',
   doctorName: 'dr. Kamal Agung Wijayana, Sp.B(K)KBD'
 }
 

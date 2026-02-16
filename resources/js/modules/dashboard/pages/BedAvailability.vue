@@ -1,9 +1,9 @@
 <template>
-  <div class="mx-auto min-h-screen max-w-md bg-slate-100 pb-24">
-    <header class="bg-rose-700 px-4 pb-8 pt-8 text-white">
+  <div class="mx-auto min-h-screen max-w-md bg-slate-50 pb-24">
+    <header class="bg-gradient-to-r from-teal-600 to-cyan-600 px-4 pb-8 pt-7 text-white">
       <RouterLink to="/" class="text-2xl">←</RouterLink>
       <h1 class="mt-3 text-2xl font-bold">Ketersediaan Tempat Tidur</h1>
-      <p class="text-sm text-rose-100">Data contoh untuk tampilan front-end.</p>
+      <p class="text-sm text-cyan-100">Data contoh untuk kebutuhan tampilan front-end.</p>
     </header>
 
     <main class="space-y-3 px-4 pt-4">
@@ -26,13 +26,13 @@
         </div>
 
         <div class="mt-3">
-          <div class="mb-1 flex items-center justify-between text-xs text-slate-500">
-            <span>Ketersediaan</span>
-            <span>{{ item.available }}/{{ item.total }}</span>
+          <div class="mb-1 flex items-center justify-between text-sm text-slate-600">
+            <span>Slot tersedia</span>
+            <span class="font-semibold">{{ item.available }}/{{ item.total }}</span>
           </div>
-          <div class="h-2 rounded-full bg-slate-100">
+          <div class="h-2.5 rounded-full bg-slate-100">
             <div
-              class="h-2 rounded-full bg-sky-500"
+              class="h-2.5 rounded-full bg-teal-500"
               :style="{ width: `${(item.available / item.total) * 100}%` }"
             />
           </div>

@@ -1,43 +1,45 @@
 <template>
-  <div class="mx-auto min-h-screen max-w-md bg-slate-100 pb-24">
-    <section class="rounded-b-3xl bg-rose-700 px-4 pb-5 pt-6 text-white">
+  <div class="mx-auto min-h-screen max-w-md bg-slate-50 pb-24">
+    <section class="rounded-b-[2rem] bg-gradient-to-br from-teal-600 to-cyan-600 px-4 pb-6 pt-7 text-white shadow-lg">
       <div class="flex items-center gap-3">
-        <div class="flex-1 rounded-full bg-white px-4 py-3 text-slate-500">🔍 Cari layanan rumah sakit</div>
-        <div class="grid h-12 w-12 place-items-center rounded-full bg-white text-xl text-emerald-600">👤</div>
+        <div class="flex-1 rounded-2xl bg-white/95 px-4 py-3 text-sm font-medium text-slate-500">🔍 Cari layanan kesehatan</div>
+        <div class="grid h-12 w-12 place-items-center rounded-2xl bg-white text-xl text-teal-700">👤</div>
       </div>
 
-      <article class="mt-4 rounded-2xl bg-rose-600 p-4">
-        <p class="inline-block rounded-full bg-white px-3 py-1 text-xs font-semibold text-emerald-700">Promo Kesehatan</p>
-        <h1 class="mt-3 text-3xl font-black leading-tight">Diskon Medical Check Up</h1>
-        <p class="mt-1 text-sm text-rose-100">Gunakan voucher untuk pemeriksaan kesehatan minggu ini.</p>
+      <article class="mt-4 rounded-2xl bg-white/15 p-4 backdrop-blur-sm">
+        <p class="text-sm text-cyan-50">Selamat datang, {{ patientSnapshot.name }}</p>
+        <p class="mt-2 text-2xl font-bold leading-tight">Pantau layanan kesehatan dengan lebih mudah</p>
+        <p class="mt-2 text-sm text-cyan-50">Tampilan dibuat lebih jelas dan nyaman untuk semua usia.</p>
       </article>
     </section>
 
-    <section class="-mt-4 space-y-4 px-4">
+    <main class="-mt-3 space-y-4 px-4">
       <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <div class="flex items-center justify-between">
+        <div class="flex items-start justify-between gap-3">
           <div>
-            <p class="text-sm text-slate-500">No. RM</p>
-            <p class="text-xl font-bold text-slate-800">000123456</p>
+            <p class="text-sm text-slate-500">No. Rekam Medis</p>
+            <p class="text-xl font-bold text-slate-900">{{ patientSnapshot.mrn }}</p>
           </div>
-          <div class="text-right">
-            <p class="text-sm text-slate-500">Status</p>
-            <p class="font-semibold text-emerald-600">Aktif</p>
-          </div>
+          <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">Aktif</span>
+        </div>
+        <div class="mt-3 rounded-xl bg-slate-50 p-3">
+          <p class="text-xs text-slate-500">Jadwal terdekat</p>
+          <p class="text-base font-semibold text-slate-800">{{ patientSnapshot.clinic }}</p>
+          <p class="text-sm text-slate-600">{{ patientSnapshot.nextVisit }}</p>
         </div>
       </article>
 
-      <ServiceMenuGrid :menus="serviceMenus" />
+      <ServiceMenuGrid :sections="menuSections" />
 
-      <div class="space-y-3">
-        <h2 class="text-2xl font-bold text-slate-900">Promo yang wajib dicek</h2>
-        <article v-for="promo in promos" :key="promo.id" class="rounded-2xl bg-emerald-700 p-4 text-white">
-          <p class="text-lg font-semibold">{{ promo.title }}</p>
-          <p class="mt-1 text-sm text-emerald-100">{{ promo.subtitle }}</p>
-          <button class="mt-3 rounded-lg bg-white px-3 py-1 text-sm font-semibold text-emerald-700">{{ promo.cta }}</button>
+      <section class="space-y-3 pb-2">
+        <h2 class="text-2xl font-bold text-slate-900">Info & Promo Kesehatan</h2>
+        <article v-for="promo in promos" :key="promo.id" class="rounded-2xl border border-teal-100 bg-gradient-to-r from-teal-50 to-cyan-50 p-4">
+          <p class="text-lg font-semibold text-slate-900">{{ promo.title }}</p>
+          <p class="mt-1 text-sm text-slate-600">{{ promo.subtitle }}</p>
+          <button class="mt-3 rounded-xl bg-teal-600 px-4 py-2 text-sm font-semibold text-white">{{ promo.cta }}</button>
         </article>
-      </div>
-    </section>
+      </section>
+    </main>
 
     <MobileBottomNav />
   </div>
@@ -46,5 +48,5 @@
 <script setup>
 import MobileBottomNav from '../components/MobileBottomNav.vue'
 import ServiceMenuGrid from '../components/ServiceMenuGrid.vue'
-import { promos, serviceMenus } from '../data/mobileDashboardData'
+import { menuSections, patientSnapshot, promos } from '../data/mobileDashboardData'
 </script>

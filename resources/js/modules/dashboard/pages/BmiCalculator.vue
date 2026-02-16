@@ -1,28 +1,28 @@
 <template>
-  <div class="mx-auto min-h-screen max-w-md bg-slate-100 pb-24">
-    <header class="bg-rose-700 px-4 pb-8 pt-8 text-white">
+  <div class="mx-auto min-h-screen max-w-md bg-slate-50 pb-24">
+    <header class="bg-gradient-to-r from-teal-600 to-cyan-600 px-4 pb-8 pt-7 text-white">
       <RouterLink to="/" class="text-2xl">←</RouterLink>
       <h1 class="mt-3 text-2xl font-bold">Kalkulator BMI</h1>
-      <p class="text-sm text-rose-100">Isi tinggi dan berat badan untuk cek BMI.</p>
+      <p class="text-sm text-cyan-100">Input dibuat sederhana agar mudah digunakan.</p>
     </header>
 
-    <main class="px-4 pt-4">
+    <main class="space-y-4 px-4 pt-4">
       <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <label class="mb-1 block text-sm text-slate-600">Tinggi badan (cm)</label>
-        <input v-model.number="form.heightCm" type="number" min="1" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+        <label class="mb-1 block text-base font-medium text-slate-700">Tinggi badan (cm)</label>
+        <input v-model.number="form.heightCm" type="number" min="1" class="w-full rounded-xl border border-slate-200 px-3 py-3 text-lg" />
 
-        <label class="mb-1 mt-3 block text-sm text-slate-600">Berat badan (kg)</label>
-        <input v-model.number="form.weightKg" type="number" min="1" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+        <label class="mb-1 mt-3 block text-base font-medium text-slate-700">Berat badan (kg)</label>
+        <input v-model.number="form.weightKg" type="number" min="1" class="w-full rounded-xl border border-slate-200 px-3 py-3 text-lg" />
 
-        <button class="mt-4 w-full rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white" @click="calculateBmi">
+        <button class="mt-4 w-full rounded-xl bg-teal-600 px-4 py-3 text-base font-semibold text-white" @click="calculateBmi">
           Hitung BMI
         </button>
       </article>
 
-      <article v-if="result" class="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
-        <p class="text-sm text-emerald-700">Hasil BMI</p>
-        <p class="mt-1 text-3xl font-bold text-emerald-800">{{ result.bmi }}</p>
-        <p class="text-sm font-medium text-emerald-700">Kategori: {{ result.category }}</p>
+      <article v-if="result" class="rounded-2xl border border-teal-200 bg-teal-50 p-4">
+        <p class="text-sm text-teal-700">Hasil BMI</p>
+        <p class="mt-1 text-4xl font-bold text-teal-800">{{ result.bmi }}</p>
+        <p class="text-base font-semibold text-teal-700">Kategori: {{ result.category }}</p>
       </article>
     </main>
 
