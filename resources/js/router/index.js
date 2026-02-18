@@ -17,7 +17,7 @@ import NotFound from '../modules/common/pages/NotFound.vue'
 import SplashScreen from '../modules/system/pages/SplashScreen.vue'
 
 const routes = [
-  { path: '/SplashScreen', name: 'splash', component: SplashScreen},
+  { path: '/splash', name: 'splash', component: SplashScreen },
   { path: '/login', name: 'login', component: Login, meta: { guestOnly: true } },
   { path: '/register', name: 'register', component: Register, meta: { guestOnly: true } },
   { path: '/', name: 'mobile-home', component: MobileHome },
@@ -41,6 +41,15 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
+  if (to.name !== 'splash' && !sessionStorage.getItem('splash_seen')) {
+    return {
+      name: 'splash',
+      query: {
+        redirect: to.fullPath
+      }
+    }
+  }
+  
   const token = localStorage.getItem('auth_token')
 
   if (to.meta.guestOnly && token) {
