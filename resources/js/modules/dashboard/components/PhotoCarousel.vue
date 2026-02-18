@@ -31,7 +31,7 @@ const props = defineProps({
   },
   autoplayMs: {
     type: Number,
-    default: 3500
+    default: 5000
   }
 })
 

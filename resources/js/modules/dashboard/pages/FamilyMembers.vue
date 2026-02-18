@@ -1,8 +1,13 @@
 <template>
   <div class="mx-auto min-h-screen max-w-md bg-slate-50 pb-24">
     <header class="flex items-center justify-between bg-white px-4 pb-4 pt-6">
-      <RouterLink to="/" class="text-2xl">←</RouterLink>
-      <h1 class="text-2xl font-bold text-slate-900">Anggota Keluarga</h1>
+      <div class="header-top">
+        <RouterLink to="/" class="back-btn">
+          <font-awesome-icon icon="arrow-left" />
+        </RouterLink>
+
+        <h1 class="header-title">Anggota Keluarga</h1>
+      </div>
       <RouterLink to="/keluarga/tambah" class="text-3xl leading-none">+</RouterLink>
     </header>
 
@@ -33,12 +38,13 @@
         </article>
       </section>
 
-      <section v-else class="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500">
-        <p class="text-2xl">🔎</p>
-        <p class="mt-3 text-2xl font-bold text-slate-800">Kosong</p>
-        <p class="mt-1 text-base">Anda belum memiliki data keluarga</p>
-        <RouterLink to="/keluarga/tambah" class="mt-5 inline-block rounded-xl bg-teal-600 px-4 py-2 font-semibold text-white">Tambah Keluarga</RouterLink>
-      </section>
+      <EmptyState
+        v-else
+        title="Belum Ada Anggota Keluarga"
+        description="Tambahkan data keluarga agar bisa daftar berobat lebih cepat"
+        actionText="Tambah Keluarga"
+        to="/keluarga/tambah"
+      />
     </main>
 
     <MobileBottomNav />
@@ -48,6 +54,7 @@
 <script setup>
 import { computed } from 'vue'
 import MobileBottomNav from '../components/MobileBottomNav.vue'
+import EmptyState from '@/modules/system/pages/EmptyState.vue'
 
 const familyMembers = computed(() => {
   try {

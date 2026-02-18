@@ -14,8 +14,10 @@ import ProfilePage from '../modules/dashboard/pages/ProfilePage.vue'
 import PromoPage from '../modules/dashboard/pages/PromoPage.vue'
 import MobilePlaceholder from '../modules/dashboard/pages/MobilePlaceholder.vue'
 import NotFound from '../modules/common/pages/NotFound.vue'
+import SplashScreen from '../modules/system/pages/SplashScreen.vue'
 
 const routes = [
+  { path: '/SplashScreen', name: 'splash', component: SplashScreen},
   { path: '/login', name: 'login', component: Login, meta: { guestOnly: true } },
   { path: '/register', name: 'register', component: Register, meta: { guestOnly: true } },
   { path: '/', name: 'mobile-home', component: MobileHome },

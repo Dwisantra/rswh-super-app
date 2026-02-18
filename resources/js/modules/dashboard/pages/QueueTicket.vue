@@ -1,12 +1,20 @@
 <template>
   <div class="mx-auto min-h-screen max-w-md bg-slate-50 pb-24">
-    <header class="bg-gradient-to-r from-teal-600 to-cyan-600 px-4 pb-20 pt-7 text-white">
-      <RouterLink to="/" class="text-2xl">←</RouterLink>
-      <h1 class="mt-3 text-2xl font-bold">Tiket Antrian</h1>
-      <p class="text-sm text-cyan-100">Silakan datang 15 menit sebelum jadwal.</p>
+    <header class="app-header ticket-header mb-4">
+      <div class="header-top">
+        <RouterLink to="/" class="back-btn">
+          <font-awesome-icon icon="arrow-left" />
+        </RouterLink>
+
+        <h1 class="header-title">Tiket Antrian</h1>
+      </div>
+
+      <p class="header-subtitle">
+        Silakan datang 15 menit sebelum jadwal.
+      </p>
     </header>
 
-    <main class="-mt-14 px-4">
+    <main class="ticket-main px-4">
       <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-md">
         <div class="text-center">
           <p class="text-sm text-slate-500">Nomor Antrian Loket</p>

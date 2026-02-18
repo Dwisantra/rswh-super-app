@@ -52,7 +52,7 @@ export const menuSections = [
         id: 1,
         label: 'Keluarga',
         subtitle: 'Kelola pasien/anggota keluarga',
-        icon: '👨‍👩‍👧‍👦',
+        icon: "users",
         to: '/keluarga',
         tone: 'bg-sky-50 text-sky-700 border-sky-100'
       },
@@ -60,7 +60,7 @@ export const menuSections = [
         id: 2,
         label: 'Pendaftaran',
         subtitle: 'Daftar berobat tanpa spam data',
-        icon: '📝',
+        icon: "user-plus",
         to: '/pendaftaran',
         tone: 'bg-teal-50 text-teal-700 border-teal-100'
       },
@@ -68,17 +68,33 @@ export const menuSections = [
         id: 3,
         label: 'Jadwal Dokter',
         subtitle: 'Per tanggal & klinik',
-        icon: '🩺',
+        icon: "stethoscope",
         to: '/jadwal-dokter',
-        tone: 'bg-emerald-50 text-emerald-700 border-emerald-100'
+        tone: 'bg-slate-50 text-slate-700 border-slate-100'
       },
       {
         id: 4,
         label: 'Tempat Tidur',
         subtitle: 'Cek ketersediaan rawat inap',
-        icon: '🛏️',
+        icon: "bed",
         to: '/tempat-tidur',
         tone: 'bg-cyan-50 text-cyan-700 border-cyan-100'
+      },
+      {
+        id: 5,
+        label: 'Penunjang',
+        subtitle: 'Cek ketersediaan rawat inap',
+        icon: "x-ray",
+        to: '/tempat-tidur',
+        tone: 'bg-lime-50 text-lime-700 border-lime-100'
+      },
+      {
+        id: 6,
+        label: 'BMI',
+        subtitle: 'Cek BMI',
+        icon: "weight-scale",
+        to: '/bmi',
+        tone: 'bg-amber-50 text-amber-700 border-amber-100'
       }
     ]
   }

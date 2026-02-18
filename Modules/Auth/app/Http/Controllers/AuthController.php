@@ -51,7 +51,6 @@ class AuthController extends Controller
         ]);
 
         $simrsPatient = $this->regonline->findPatientByNik($validated['nik']);
-        // var_dump($simrsPatient['status']);
         $isExistingPatient = $simrsPatient['status'] == 200;
 
         $resolvedNorm = $validated['norm']

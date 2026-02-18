@@ -2,21 +2,27 @@
   <div class="mx-auto min-h-screen max-w-md bg-slate-50 pb-24">
     <section class="rounded-b-[2rem] bg-gradient-to-br from-teal-600 to-cyan-600 px-4 pb-6 pt-7 text-white shadow-lg">
       <div class="flex items-center gap-3">
-        <div class="flex-1 rounded-2xl bg-white/95 px-4 py-2.5">
+        <div class="search-box">
+          <font-awesome-icon icon="magnifying-glass" class="search-icon" />
           <input
             v-model.trim="searchQuery"
             type="text"
-            placeholder="🔍 Cari layanan kesehatan"
-            class="w-full bg-transparent text-sm font-medium text-slate-700 outline-none placeholder:text-slate-500"
+            placeholder="Cari layanan kesehatan"
+            class="search-input"
           />
         </div>
-        <RouterLink to="/profil" class="grid h-12 w-12 place-items-center rounded-2xl bg-white text-xl text-teal-700">👤</RouterLink>
+        <RouterLink
+          to="/profil"
+          class="profile-btn control-height aspect-square place-items-center rounded-2xl bg-white text-teal-700"
+        >
+          <font-awesome-icon icon="user" />
+        </RouterLink>
       </div>
 
       <article class="mt-4 rounded-2xl bg-white/15 p-4 backdrop-blur-sm">
         <p class="text-sm text-cyan-50">Selamat datang, {{ patientSnapshot.name }}</p>
-        <p class="mt-2 text-2xl font-bold leading-tight">Pantau layanan kesehatan dengan lebih mudah</p>
-        <p class="mt-2 text-sm text-cyan-50">Tampilan dibuat lebih jelas dan nyaman untuk semua usia.</p>
+        <!-- <p class="mt-2 text-2xl font-bold leading-tight">Pantau layanan kesehatan dengan lebih mudah</p>
+        <p class="mt-2 text-sm text-cyan-50">Tampilan dibuat lebih jelas dan nyaman untuk semua usia.</p> -->
       </article>
     </section>
 

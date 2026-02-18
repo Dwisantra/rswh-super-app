@@ -1,9 +1,17 @@
 <template>
   <div class="mx-auto min-h-screen max-w-md bg-slate-50 pb-24">
-    <header class="bg-gradient-to-r from-teal-600 to-cyan-600 px-4 pb-8 pt-7 text-white">
-      <RouterLink to="/" class="text-2xl">←</RouterLink>
-      <h1 class="mt-3 text-2xl font-bold">Profil Pasien</h1>
-      <p class="text-sm text-cyan-100">Data profil (dummy) untuk tampilan aplikasi.</p>
+    <header class="app-header">
+      <div class="header-top">
+        <RouterLink to="/" class="back-btn">
+          <font-awesome-icon icon="arrow-left" />
+        </RouterLink>
+
+        <h1 class="header-title">Profil Pasien</h1>
+      </div>
+
+      <p class="header-subtitle">
+        Data profil (dummy) untuk tampilan aplikasi.
+      </p>
     </header>
 
     <main class="space-y-3 px-4 pt-4">

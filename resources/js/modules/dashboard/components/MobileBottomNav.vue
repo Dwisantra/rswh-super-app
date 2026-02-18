@@ -8,7 +8,7 @@
         class="flex min-h-14 flex-col items-center justify-center rounded-xl text-xs font-medium text-slate-500"
         :class="$route.path === item.to ? 'bg-teal-50 text-teal-700' : ''"
       >
-        <span class="text-base">{{ item.icon }}</span>
+        <span class="text-base"><font-awesome-icon :icon="item.icon" /></span>
         <span>{{ item.label }}</span>
       </RouterLink>
     </div>
@@ -17,9 +17,9 @@
 
 <script setup>
 const navItems = [
-  { label: 'Beranda', to: '/', icon: '🏠' },
-  { label: 'Promo', to: '/promo', icon: '🏷️' },
-  { label: 'Aktivitas', to: '/ticket', icon: '🧾' },
-  { label: 'Chat', to: '/chat', icon: '💬' }
+  { label: 'Beranda', to: '/', icon: 'home' },
+  { label: 'Promo', to: '/promo', icon: 'percent' },
+  { label: 'Antrian', to: '/ticket', icon: 'ticket' },
+  { label: 'Chat', to: '/chat', icon: 'comment-dots' }
 ]
 </script>

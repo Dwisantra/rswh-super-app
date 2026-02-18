@@ -1,7 +1,9 @@
 <template>
   <div class="mx-auto min-h-screen max-w-md bg-slate-50 pb-24">
     <header class="bg-gradient-to-r from-teal-600 to-cyan-600 px-4 pb-6 pt-7 text-white">
-      <h1 class="text-2xl font-bold">Promo Kesehatan</h1>
+      <div class="header-top mb-4">        
+        <h1 class="text-2xl font-bold">Promo Kesehatan</h1>
+      </div>
       <p class="text-sm text-cyan-100">Promo terbaru untuk layanan kesehatan keluarga.</p>
     </header>
 
