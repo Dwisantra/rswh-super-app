@@ -31,6 +31,15 @@
         <p class="text-xs text-slate-500">No. HP</p>
         <p class="text-lg font-semibold text-slate-900">{{ profile.phone }}</p>
       </article>
+
+      <button
+        type="button"
+        class="mt-2 w-full rounded-xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-70"
+        :disabled="isLoggingOut"
+        @click="logout"
+      >
+        {{ isLoggingOut ? 'Keluar...' : 'Logout' }}
+      </button>
     </main>
 
     <MobileBottomNav />
@@ -38,12 +47,33 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
 import MobileBottomNav from '../components/MobileBottomNav.vue'
+
+const router = useRouter()
+const isLoggingOut = ref(false)
 
 const profile = {
   name: 'Okvi Dwi Santra',
   mrn: '000123456',
   nik: '3175xxxxxxxxxxxx',
   phone: '0812-3456-7890'
+}
+
+const logout = async () => {
+  isLoggingOut.value = true
+
+  try {
+    await axios.post('/api/v1/logout')
+  } catch (_) {
+    // abaikan jika API logout gagal
+  }
+
+  localStorage.removeItem('auth_token')
+  delete axios.defaults.headers.common.Authorization
+  await router.push('/login')
+  isLoggingOut.value = false
 }
 </script>
