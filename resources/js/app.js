@@ -7,12 +7,17 @@ import router from './router'
 /* FontAwesome */
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faUsers, faUserPlus, faStethoscope, faBed, faHospital, faXRay, faHome,
-  faPercent, faTicket, faCommentDots, faMagnifyingGlass, faUser, faArrowLeft, faWeightScale
+import { 
+  faUsers, faUserPlus, faStethoscope, faBed, faHospital, faXRay, faHome, faClock,
+  faPercent, faTicket, faCommentDots, faMagnifyingGlass, faUser, faArrowLeft, faWeightScale, faUserDoctor,
+  faUserInjured, faCircleCheck, faCircleXmark, faHeartbeat, faHospitalUser, faProcedures, faMale, faFemale,
+  faMars, faVenus,
 } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faUsers, faUserPlus, faStethoscope, faBed, faHospital, faXRay, faHome,
-  faPercent, faTicket, faCommentDots, faMagnifyingGlass, faUser, faArrowLeft, faWeightScale
+library.add(faUsers, faUserPlus, faStethoscope, faBed, faHospital, faXRay, faHome, faClock,
+  faPercent, faTicket, faCommentDots, faMagnifyingGlass, faUser, faArrowLeft, faWeightScale, faUserDoctor,
+  faBed, faUserInjured, faCircleCheck, faCircleXmark, faHeartbeat, faHospitalUser, faProcedures, faMale, faFemale,
+  faMars, faVenus
 )
 
 const app = createApp(App)

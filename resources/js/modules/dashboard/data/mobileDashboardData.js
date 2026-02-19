@@ -85,7 +85,7 @@ export const menuSections = [
         label: 'Penunjang',
         subtitle: 'Cek ketersediaan rawat inap',
         icon: "x-ray",
-        to: '/tempat-tidur',
+        to: '/penunjang',
         tone: 'bg-lime-50 text-lime-700 border-lime-100'
       },
       {

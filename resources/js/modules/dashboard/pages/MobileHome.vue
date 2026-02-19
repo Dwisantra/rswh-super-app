@@ -48,7 +48,7 @@
 
       <section class="space-y-3 pb-2">
         <div class="flex items-center justify-between">
-          <h2 class="text-2xl font-bold text-slate-900">Info & Promo Kesehatan</h2>
+          <h2 class="text-ml font-bold text-slate-900">Info & Promo Kesehatan</h2>
           <RouterLink to="/promo" class="text-sm font-semibold text-teal-700">Lihat semua</RouterLink>
         </div>
         <article v-for="promo in promos" :key="promo.id" class="rounded-2xl border border-teal-100 bg-gradient-to-r from-teal-50 to-cyan-50 p-4">

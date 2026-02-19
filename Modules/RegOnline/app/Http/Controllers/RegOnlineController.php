@@ -25,7 +25,10 @@ class RegOnlineController extends Controller
 
     public function doctorSchedules(Request $request)
     {
-        return response()->json($this->regonline->getDoctorSchedules($request->user()));
+        return response()->json($this->regonline->getDoctorSchedules(
+            $request->user(),
+            $request->query('doctor_name')
+        ));
     }
 
     public function bedCapacity(Request $request)

@@ -73,24 +73,40 @@ class RegOnlineService
         ];
     }
 
-    public function getDoctorSchedules(User $user): array
+    public function getDoctorSchedules(User $user, ?string $doctorName = null): array
     {
         try {
             $response = Http::withHeaders($this->headers($user))
                 ->timeout((int) config('regonline.timeout', 15))
-                ->get($this->url.'/registrasionline/rsonline/getJadwalDokter');
+                ->get($this->url.'/registrasionline/plugins/getJadwalDokterHfis');
 
             if ($response->successful()) {
-                return Arr::get($response->json(), 'response.data', $response->json());
+                $data = Arr::get($response->json(), 'response.data', $response->json());
+                return $this->filterDoctorSchedules($data, $doctorName);
             }
         } catch (ConnectionException) {
         }
 
         return [
-            ['clinic_name' => 'Poli Penyakit Dalam', 'doctor_name' => 'dr. S. Wiratama, Sp.PD', 'schedule' => 'Senin - 08:00'],
-            ['clinic_name' => 'Poli Anak', 'doctor_name' => 'dr. A. Lestari, Sp.A', 'schedule' => 'Selasa - 09:30'],
-            ['clinic_name' => 'Poli Saraf', 'doctor_name' => 'dr. M. Hidayat, Sp.N', 'schedule' => 'Rabu - 10:00'],
+            'status' => $response->status(),
+            'body' => $response->body()
         ];
+        return $this->filterDoctorSchedules($fallback, $doctorName);
+    }
+
+    protected function filterDoctorSchedules(array $schedules, ?string $doctorName = null): array
+    {
+        if (!$doctorName) {
+            return $schedules;
+        }
+
+        $keyword = Str::lower(trim($doctorName));
+
+        return array_values(array_filter($schedules, function ($item) use ($keyword) {
+            $name = (string) data_get($item, 'doctor_name', data_get($item, 'nm_dokter', ''));
+
+            return Str::contains(Str::lower($name), $keyword);
+        }));
     }
 
     public function getBedCapacity(User $user): array
@@ -98,7 +114,7 @@ class RegOnlineService
         try {
             $response = Http::withHeaders($this->headers($user))
                 ->timeout((int) config('regonline.timeout', 15))
-                ->get($this->url.'/registrasionline/rsonline/getKapasitasTempatTidur');
+                ->get($this->url.'/registrasionline/plugins/getKetersediaanTempatTidur');
 
             if ($response->successful()) {
                 return Arr::get($response->json(), 'response.data', $response->json());

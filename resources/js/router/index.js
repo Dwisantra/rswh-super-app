@@ -30,6 +30,7 @@ const routes = [
   { path: '/jadwal-dokter', name: 'doctor-schedule', component: DoctorSchedule },
   { path: '/bmi', name: 'bmi-calculator', component: BmiCalculator },
   { path: '/tempat-tidur', name: 'bed-availability', component: BedAvailability },
+  { path: '/penunjang', name: 'penunjang', component: MobilePlaceholder, meta: { title: 'Penunjang' }},
   { path: '/promo', name: 'promo', component: PromoPage },
   { path: '/chat', name: 'chat', component: MobilePlaceholder, meta: { title: 'Chat' } },
   { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound }
