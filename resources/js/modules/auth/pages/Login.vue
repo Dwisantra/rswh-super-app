@@ -141,7 +141,7 @@ onMounted(async () => {
     window.google.accounts.id.initialize({
       client_id: googleClientId,
       callback: handleGoogleCredential,
-      use_fedcm_for_prompt: true
+      auto_select: false
     })
 
     window.google.accounts.id.renderButton(googleButtonRef.value, {
@@ -152,7 +152,9 @@ onMounted(async () => {
       width: 320
     })
 
-    window.google.accounts.id.prompt()
+    google.accounts.id.prompt((notification) => {
+      console.log(notification);
+  });
   } catch (_) {
     // SDK gagal dimuat, fallback ke login biasa
   }

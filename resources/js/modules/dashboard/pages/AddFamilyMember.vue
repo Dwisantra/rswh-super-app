@@ -2,7 +2,9 @@
   <div class="mx-auto min-h-screen max-w-md bg-slate-50 pb-10">
     <header class="bg-white px-4 pb-4 pt-6">
       <div class="flex items-center justify-between">
-        <RouterLink to="/keluarga" class="text-2xl">←</RouterLink>
+        <RouterLink to="/keluarga" class="back-btn">
+          <font-awesome-icon icon="arrow-left" />
+        </RouterLink>
         <h1 class="text-2xl font-bold text-slate-900">Tambah Keluarga</h1>
         <span class="w-6" />
       </div>
