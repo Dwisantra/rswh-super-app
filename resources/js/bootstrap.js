@@ -6,21 +6,20 @@ window.axios.defaults.timeout = 4000;
 
 const token = localStorage.getItem('auth_token');
 if (token) {
-  window.axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    window.axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 }
 
 window.axios.interceptors.response.use(
-    response => response,
-    error => {
-        // offline / server mati / timeout
+    (response) => response,
+    (error) => {
         if (!error.response) {
             console.warn('SERVER OFFLINE / TIDAK ADA INTERNET');
-            return Promise.resolve({ data: null });
         }
-        // token expired
-        if (error.response.status === 401) {
+
+        if (error.response?.status === 401) {
             localStorage.removeItem('auth_token');
         }
-        return Promise.resolve({ data: null });
+
+        return Promise.reject(error);
     }
 );

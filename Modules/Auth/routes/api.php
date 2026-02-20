@@ -7,6 +7,7 @@ use Modules\Auth\Http\Controllers\GoogleAuthController;
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/auth/google', [GoogleAuthController::class, 'login']);
+Route::post('/register/email-otp', [AuthController::class, 'sendRegisterEmailOtp']);
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     // Route::apiResource('auths', AuthController::class)->names('auth');

@@ -11,7 +11,13 @@
         </div>
         <div>
           <label class="text-sm font-medium text-slate-700">Kata Sandi</label>
-          <input v-model="form.password" type="password" placeholder="••••••••" class="mt-1 w-full rounded-xl border border-slate-200 px-4 py-2.5 focus:border-sky-500 focus:outline-none" />
+          <div class="mt-1 flex rounded-xl border border-slate-200 focus-within:border-sky-500">
+            <input v-model="form.password" :type="showPassword ? 'text' : 'password'" placeholder="••••••••" class="w-full rounded-l-xl px-4 py-2.5 focus:outline-none" />
+            <button type="button" class="px-3 text-xs font-medium text-slate-600" @click="showPassword = !showPassword">
+              <font-awesome-icon v-if="showPassword" icon="eye" />
+              <font-awesome-icon v-else icon="eye-slash" />
+            </button>
+          </div>
         </div>
         <p v-if="error" class="text-sm text-red-600">{{ error }}</p>
 
@@ -51,6 +57,7 @@ const router = useRouter()
 const loading = ref(false)
 const googleButtonRef = ref(null)
 const error = ref('')
+const showPassword = ref(false)
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
 
 const form = reactive({
@@ -113,15 +120,13 @@ const handleGoogleCredential = async ({ credential }) => {
     })
 
     applyLogin(data.token)
-
+    
     if (data.isProfileGoogle) {
         window.location.href = '/'
     } else {
         window.location.href = '/'
     }
-
   } catch (e) {
-    console.log(e)
     error.value = e.response?.data?.message || 'Login Google gagal. Coba lagi.'
   }
 }

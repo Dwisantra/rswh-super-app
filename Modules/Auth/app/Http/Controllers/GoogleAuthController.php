@@ -33,17 +33,18 @@ class GoogleAuthController extends Controller
 
         $payload = $response->json();
 
-        // VALIDASI CLIENT ID
+        // validasi client id
         if ($payload['aud'] !== config('services.google.client_id')) {
             return response()->json([
                 'message' => 'Client ID mismatch'
             ], 401);
         }
+
         // ambil data user
         $email = $payload['email'];
         $name = $payload['name'] ?? $payload['email'];
+        $googleId = $payload['sub'];
 
-// var_dump($name);
         // cari / buat user
         $user = User::firstOrCreate(
             ['email' => $email],
@@ -51,8 +52,9 @@ class GoogleAuthController extends Controller
                 'name' => $name,
                 'nik' => null,
                 'password' => bcrypt(Str::random(32)),
+                'google_id' => $googleId,
                 'email_verified_at' => now(),
-                'profile_completed' => false,
+                'profile_completed' => 1,
             ]
         );
 
