@@ -6,6 +6,8 @@ import QueueTicket from '../modules/dashboard/pages/QueueTicket.vue'
 import BmiCalculator from '../modules/dashboard/pages/BmiCalculator.vue'
 import BedAvailability from '../modules/dashboard/pages/BedAvailability.vue'
 import DoctorSchedule from '../modules/dashboard/pages/DoctorSchedule.vue'
+import PatientOperationSchedule from '../modules/dashboard/pages/PatientOperationSchedule.vue'
+import QueueMonitor from '../modules/dashboard/pages/QueueMonitor.vue'
 import FamilyMembers from '../modules/dashboard/pages/FamilyMembers.vue'
 import AddFamilyMember from '../modules/dashboard/pages/AddFamilyMember.vue'
 import NewPatientRegistration from '../modules/dashboard/pages/NewPatientRegistration.vue'
@@ -28,6 +30,8 @@ const routes = [
   { path: '/pendaftaran', name: 'registration', component: RegistrationPage },
   { path: '/ticket', name: 'queue-ticket', component: QueueTicket },
   { path: '/jadwal-dokter', name: 'doctor-schedule', component: DoctorSchedule },
+  { path: '/jadwal-operasi-pasien', name: 'patient-operation-schedule', component: PatientOperationSchedule },
+  { path: '/pantau-antrian', name: 'queue-monitor', component: QueueMonitor },
   { path: '/bmi', name: 'bmi-calculator', component: BmiCalculator },
   { path: '/tempat-tidur', name: 'bed-availability', component: BedAvailability },
   { path: '/penunjang', name: 'penunjang', component: MobilePlaceholder, meta: { title: 'Penunjang' }},

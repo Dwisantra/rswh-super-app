@@ -52,6 +52,13 @@ class RegOnlineController extends Controller
         return response()->json($query->get());
     }
 
+    public function monitorClinicQueues(Request $request)
+    {
+        return response()->json([
+            'queues' => $this->regonline->getAllClinicQueues($request->user()),
+        ]);
+    }
+
     public function createRegistration(Request $request)
     {
         $validated = $request->validate([

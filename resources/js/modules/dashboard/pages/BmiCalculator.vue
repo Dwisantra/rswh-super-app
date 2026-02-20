@@ -1,15 +1,10 @@
 <template>
   <div class="mx-auto min-h-screen max-w-md bg-slate-50 pb-24">
-    <header class="bg-gradient-to-r from-teal-600 to-cyan-600 px-4 pb-8 pt-7 text-white">
-      <div class="header-top mb-4">
-        <RouterLink to="/" class="back-btn">
-          <font-awesome-icon icon="arrow-left" />
-        </RouterLink>
-
-        <h1 class="header-title">Kalkulator BMI</h1>
-      </div>
-      <p class="text-sm text-cyan-100">Input dibuat sederhana agar mudah digunakan.</p>
-    </header>
+    <PageHeader 
+      title="Kalkulator BMI" 
+      description="Input dibuat sederhana agar mudah digunakan."
+      backTo="/"
+    />
 
     <main class="space-y-4 px-4 pt-4">
       <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -100,6 +95,7 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import MobileBottomNav from '../components/MobileBottomNav.vue'
+import PageHeader from '../components/Header.vue'
 
 const form = reactive({
   gender: 'pria',

@@ -129,6 +129,25 @@ class RegOnlineService
         ];
     }
 
+    public function getAllClinicQueues(User $user): array
+    {
+        try {
+            $response = Http::withHeaders($this->headers($user))
+                ->timeout((int) config('regonline.timeout', 15))
+                ->get($this->url.'/registrasionline/plugins/getMonitoringAntrianPoli');
+
+            if ($response->successful()) {
+                return Arr::get($response->json(), 'response.data', $response->json());
+            }
+        } catch (ConnectionException) {
+        }
+
+        return [
+            'status' => $response->status(),
+            'body' => $response->body()
+        ];
+    }
+
     public function submitRegistration(User $user, array $payload): array
     {
         $payload['patient_key'] = $user->nik ?: $user->norm;

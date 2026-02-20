@@ -1,18 +1,10 @@
 <template>
   <div class="mx-auto min-h-screen max-w-md bg-slate-50 pb-24">
-    <header class="app-header">
-      <div class="header-top">
-        <RouterLink to="/" class="back-btn">
-          <font-awesome-icon icon="arrow-left" />
-        </RouterLink>
-
-        <h1 class="header-title">Profil Pasien</h1>
-      </div>
-
-      <p class="header-subtitle">
-        Data profil (dummy) untuk tampilan aplikasi.
-      </p>
-    </header>
+    <PageHeader 
+      title="Profil Pasien" 
+      description="Data profil (dummy) untuk tampilan aplikasi."
+      backTo="/"
+    />
 
     <main class="space-y-3 px-4 pt-4">
       <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -51,6 +43,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import MobileBottomNav from '../components/MobileBottomNav.vue'
+import PageHeader from '../components/Header.vue'
 
 const router = useRouter()
 const isLoggingOut = ref(false)

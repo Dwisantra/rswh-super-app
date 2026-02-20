@@ -11,13 +11,13 @@ import {
   faUsers, faUserPlus, faStethoscope, faBed, faHospital, faXRay, faHome, faClock,
   faPercent, faTicket, faCommentDots, faMagnifyingGlass, faUser, faArrowLeft, faWeightScale, faUserDoctor,
   faUserInjured, faCircleCheck, faCircleXmark, faHeartbeat, faHospitalUser, faProcedures, faMale, faFemale,
-  faMars, faVenus, faEye, faEyeSlash, faCalendarDay, faCalendarDays, faSkull
+  faMars, faVenus, faEye, faEyeSlash, faCalendarDay, faCalendarDays, faSkull, faVolumeHigh, faPlus
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faUsers, faUserPlus, faStethoscope, faBed, faHospital, faXRay, faHome, faClock,
   faPercent, faTicket, faCommentDots, faMagnifyingGlass, faUser, faArrowLeft, faWeightScale, faUserDoctor,
   faBed, faUserInjured, faCircleCheck, faCircleXmark, faHeartbeat, faHospitalUser, faProcedures, faMale, faFemale,
-  faMars, faVenus, faEye, faEyeSlash, faCalendarDay, faCalendarDays, faSkull
+  faMars, faVenus, faEye, faEyeSlash, faCalendarDay, faCalendarDays, faSkull, faVolumeHigh, faPlus
 )
 
 const app = createApp(App)

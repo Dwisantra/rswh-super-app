@@ -45,7 +45,7 @@ export const menuSections = [
   {
     id: 'utama',
     title: 'Menu Pelayanan',
-    description: 'Gunakan fitur yang dibutuhkan tanpa input berulang.',
+    description: 'Pilih fitur yang dibutuhkan pada halaman ini.',
     columns: 2,
     items: [
       {
@@ -101,7 +101,7 @@ export const menuSections = [
         label: 'Jadwal Operasi',
         subtitle: 'Cek Jadwal Operasi',
         icon: "skull",
-        to: '/sku',
+        to: '/jadwal-operasi-pasien',
         tone: 'bg-slate-50 text-slate-700 border-slate-100'
       },
       {
@@ -109,7 +109,7 @@ export const menuSections = [
         label: 'Pantau Antrian',
         subtitle: 'Cek Antrian Poliklinik',
         icon: "ticket",
-        to: '/bmi',
+        to: '/pantau-antrian',
         tone: 'bg-sky-50 text-sky-700 border-sky-100'
       }
     ]

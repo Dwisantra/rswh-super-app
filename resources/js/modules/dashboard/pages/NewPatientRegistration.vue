@@ -1,11 +1,9 @@
 <template>
   <div class="mx-auto min-h-screen max-w-md bg-cyan-50 pb-10">
-    <header class="bg-white px-4 pb-4 pt-6">
-      <div class="flex items-center gap-3">
-        <RouterLink to="/keluarga/tambah" class="text-2xl">←</RouterLink>
-        <h1 class="text-2xl font-bold text-slate-900">Pendaftaran Pasien Baru</h1>
-      </div>
-    </header>
+    <PageHeader 
+      title="Pendaftaran Pasien Baru"
+      backTo="/keluarga"
+    />
 
     <main class="px-4 pt-3">
       <div class="rounded-xl bg-cyan-100 p-3">
@@ -74,6 +72,7 @@
 <script setup>
 import { computed, defineComponent, h, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import PageHeader from '../components/Header.vue'
 
 const router = useRouter()
 const route = useRoute()

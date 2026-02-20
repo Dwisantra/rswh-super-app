@@ -1,16 +1,10 @@
 <template>
   <div class="mx-auto min-h-screen max-w-md bg-slate-50 pb-24">
-    <header class="bg-gradient-to-r from-teal-600 to-cyan-600 px-4 pb-8 pt-7 text-white">
-      <div class="header-top mb-4">
-        <RouterLink to="/" class="back-btn">
-          <font-awesome-icon icon="arrow-left" />
-        </RouterLink>
-
-        <h1 class="header-title">Pendaftaran</h1>
-      </div>
-
-      <p class="text-sm text-cyan-100">Pilih pasien tersimpan agar pendaftaran tidak spam data.</p>
-    </header>
+    <PageHeader 
+      title="Pendaftaran" 
+      description="Pilih pasien tersimpan untuk melakukan pendaftaran layanan." 
+      backTo="/"
+    />
 
     <main class="space-y-3 px-4 pt-4">
       <article v-if="!familyMembers.length" class="rounded-2xl border border-amber-200 bg-amber-50 p-4">
@@ -60,6 +54,7 @@
 import { computed, reactive, ref } from 'vue'
 import MobileBottomNav from '../components/MobileBottomNav.vue'
 import { doctorSchedules } from '../data/mobileDashboardData'
+import PageHeader from '../components/Header.vue'
 
 const form = reactive({ selectedMrn: '', clinic: '', visitDate: '' })
 const successMessage = ref('')

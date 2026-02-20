@@ -1,15 +1,10 @@
 <template>
   <div class="mx-auto min-h-screen max-w-md bg-slate-50 pb-24">
-    <header class="flex items-center justify-between bg-white px-4 pb-4 pt-6">
-      <div class="header-top">
-        <RouterLink to="/" class="back-btn">
-          <font-awesome-icon icon="arrow-left" />
-        </RouterLink>
-
-        <h1 class="header-title">Anggota Keluarga</h1>
-      </div>
-      <RouterLink to="/keluarga/tambah" class="text-3xl leading-none">+</RouterLink>
-    </header>
+    <PageHeader 
+      title="Anggota Keluarga"
+      backTo="/"
+      urlTo="/keluarga/tambah"
+    />
 
     <main class="px-4 pt-3">
       <section v-if="familyMembers.length" class="space-y-3">
@@ -55,6 +50,7 @@
 import { computed } from 'vue'
 import MobileBottomNav from '../components/MobileBottomNav.vue'
 import EmptyState from '@/modules/system/pages/EmptyState.vue'
+import PageHeader from '../components/Header.vue'
 
 const familyMembers = computed(() => {
   try {
