@@ -95,6 +95,22 @@ export const menuSections = [
         icon: "weight-scale",
         to: '/bmi',
         tone: 'bg-amber-50 text-amber-700 border-amber-100'
+      },
+      {
+        id: 7,
+        label: 'Jadwal Operasi',
+        subtitle: 'Cek Jadwal Operasi',
+        icon: "skull",
+        to: '/sku',
+        tone: 'bg-slate-50 text-slate-700 border-slate-100'
+      },
+      {
+        id: 8,
+        label: 'Pantau Antrian',
+        subtitle: 'Cek Antrian Poliklinik',
+        icon: "ticket",
+        to: '/bmi',
+        tone: 'bg-sky-50 text-sky-700 border-sky-100'
       }
     ]
   }

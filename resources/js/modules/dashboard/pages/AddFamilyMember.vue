@@ -18,11 +18,40 @@
           <option v-for="option in relationOptions" :key="option" :value="option">{{ option }}</option>
         </select>
 
-        <label class="mb-1 mt-4 block text-sm text-slate-600">No. Rekam Medis / No. Pasien</label>
-        <input v-model.trim="form.mrn" type="text" class="w-full rounded-xl border border-slate-200 px-3 py-3 text-base" placeholder="Contoh: 000123456" />
+        <label class="mb-1 mt-4 block text-sm text-slate-600">No. Rekam Medis</label>
+        <input 
+          v-model.trim="form.mrn" 
+          type="numeric" 
+          maxlength="6" 
+          @input="onlyNumber"
+          class="w-full rounded-xl border border-slate-200 px-3 py-3 text-base bg-white cursor-pointer focus:border-teal-500 outline-none no-spin" 
+          placeholder="Contoh: 001234" 
+        />
 
         <label class="mb-1 mt-4 block text-sm text-slate-600">Tanggal lahir</label>
-        <input v-model="form.birthDate" type="date" class="w-full rounded-xl border border-slate-200 px-3 py-3 text-base" />
+        <div class="relative">
+          <input 
+            :value="formatDateDisplay(form.birthDate)"
+            type="text"
+            readonly
+            placeholder="Pilih Tanggal Lahir"
+            @click="$refs.dateInput.showPicker()"
+            class="w-full rounded-xl border border-slate-200 px-3 py-3 text-base bg-white cursor-pointer focus:border-teal-500 outline-none" 
+          />
+          
+          <input 
+            ref="dateInput"
+            v-model="form.birthDate" 
+            type="date" 
+            class="absolute inset-0 opacity-0 -z-10" 
+            @change="handleDateChange"
+          />
+          
+          <font-awesome-icon 
+            icon="calendar-days" 
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" 
+          />
+        </div>
 
         <button class="mt-5 w-full rounded-xl bg-teal-600 px-4 py-3 text-base font-semibold text-white" @click="checkPatient">
           Cek Data Pasien
@@ -98,8 +127,15 @@ const isDuplicate = computed(() => {
 })
 
 const checkPatient = () => {
-  checked.value = true
-  matchedPatient.value = getSimrsPatients().find((item) => item.mrn === form.mrn && item.birthDate === form.birthDate) || null
+  checked.value = true;
+  const patients = getSimrsPatients();
+  
+  matchedPatient.value = patients.find((item) => {
+    // Paksa keduanya jadi string untuk menghindari error tipe data
+    const matchMrn = String(item.mrn) === String(form.mrn);
+    const matchDate = item.birthDate === form.birthDate;
+    return matchMrn && matchDate;
+  }) || null;
 }
 
 const saveMember = () => {
@@ -113,5 +149,26 @@ const saveMember = () => {
 
   localStorage.setItem('family_members', JSON.stringify(saved))
   router.push('/keluarga')
+}
+
+const formatDateDisplay = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return new Intl.DateTimeFormat('id-ID', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  }).format(date)
+}
+
+const handleDateChange = () => {
+  // console.log('Tanggal terpilih:', form.birthDate)
+}
+
+const onlyNumber = (event) => {
+  let val = event.target.value;
+  val = val.replace(/[^0-9]/g, '');
+  if (val.length > 6) val = val.substring(0, 6);
+  form.mrn = val;
 }
 </script>

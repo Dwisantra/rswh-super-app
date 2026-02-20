@@ -42,7 +42,7 @@
 
       <p class="mt-5 text-center text-sm text-slate-600">
         Belum punya akun?
-        <router-link to="/register" class="font-medium text-sky-600">Register Pasien</router-link>
+        <router-link to="/register" class="font-medium text-sky-600">Daftar</router-link>
       </p>
     </div>
   </div>

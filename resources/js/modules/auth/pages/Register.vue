@@ -85,13 +85,13 @@
         <p v-if="error" class="md:col-span-2 text-sm text-red-600">{{ error }}</p>
 
         <button :disabled="loading" class="md:col-span-2 w-full rounded-xl bg-sky-600 px-4 py-2.5 font-medium text-white hover:bg-sky-700 disabled:opacity-70">
-          {{ loading ? 'Mendaftarkan...' : 'Register & Masuk' }}
+          {{ loading ? 'Mendaftarkan...' : 'Daftar & Masuk' }}
         </button>
       </form>
 
       <p class="mt-5 text-center text-sm text-slate-600">
         Sudah punya akun?
-        <router-link to="/login" class="font-medium text-sky-600">Login</router-link>
+        <router-link to="/login" class="font-medium text-sky-600">Masuk</router-link>
       </p>
     </div>
   </div>

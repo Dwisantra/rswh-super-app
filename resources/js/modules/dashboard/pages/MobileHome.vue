@@ -20,9 +20,17 @@
       </div>
 
       <article class="mt-4 rounded-2xl bg-white/15 p-4 backdrop-blur-sm">
-        <p class="text-sm text-cyan-50">Selamat datang, {{ patientSnapshot.name }}</p>
-        <!-- <p class="mt-2 text-2xl font-bold leading-tight">Pantau layanan kesehatan dengan lebih mudah</p>
-        <p class="mt-2 text-sm text-cyan-50">Tampilan dibuat lebih jelas dan nyaman untuk semua usia.</p> -->
+        <div class="flex items-center gap-2">
+          <p class="text-sm text-cyan-50">
+            {{ greetingMessage }}, {{ displayName }}
+          </p>
+          <span class="animate-wave text-lg">
+            <template v-if="greetingMessage.includes('pagi')">☀️</template>
+            <template v-else-if="greetingMessage.includes('siang')">🌤️</template>
+            <template v-else-if="greetingMessage.includes('sore')">🌅</template>
+            <template v-else>🌙</template>
+          </span>
+        </div>
       </article>
     </section>
 
@@ -64,13 +72,25 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import axios from 'axios'
 import MobileBottomNav from '../components/MobileBottomNav.vue'
 import PhotoCarousel from '../components/PhotoCarousel.vue'
 import ServiceMenuGrid from '../components/ServiceMenuGrid.vue'
 import { homeBanners, menuSections, patientSnapshot, promos } from '../data/mobileDashboardData'
 
 const searchQuery = ref('')
+const displayName = ref(patientSnapshot.name)
+
+const greetingMessage = computed(() => {
+  const hour = new Date().getHours()
+
+  if (hour >= 4 && hour < 11) return 'Selamat pagi'
+  if (hour >= 11 && hour < 15) return 'Selamat siang'
+  if (hour >= 15 && hour < 18) return 'Selamat sore'
+
+  return 'Selamat malam'
+})
 
 const filteredSections = computed(() => {
   if (!searchQuery.value) return menuSections
@@ -87,5 +107,17 @@ const filteredSections = computed(() => {
       })
     }))
     .filter((section) => section.items.length > 0)
+})
+
+onMounted(async () => {
+  try {
+    const { data } = await axios.get('/api/v1/me')
+
+    if (data?.name) {
+      displayName.value = data.name
+    }
+  } catch (_) {
+    // fallback ke data snapshot jika profil belum tersedia
+  }
 })
 </script>
