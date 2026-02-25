@@ -56,21 +56,32 @@ class RegOnlineService
         ];
     }
 
-    public function findPatientByNik(string $nik): array
+    public function findPatientByIdentity(string $value, string $type = 'NIK', array $extraParams = []): array
     {
-        try {
-            $response = Http::withHeaders($this->baseHeaders())
-                ->timeout((int) config('regonline.timeout', 15))
-                ->get($this->url.'/registrasionline/plugins/getIdentitasPasien', [
-                    'NIK' => $nik
-                ]);
-        } catch (ConnectionException) {
-        }
-
-        return [
-            'status' => $response->status(),
-            'body' => $response->body()
+        $params = [
+            'NIK'  => ['NIK' => $value],
+            'KAP'  => ['KAP' => $value],
+            'NORM' => ['NORM' => $value],
         ];
+
+        $queryParam = $params[strtoupper($type)] ?? ['NIK' => $value];
+        $queryParam = array_merge($queryParam, $extraParams);
+
+        try {
+           $response = Http::withHeaders($this->baseHeaders())
+            ->timeout((int) config('regonline.timeout', 15))
+            ->get($this->url.'/registrasionline/plugins/getIdentitasPasien', $queryParam);
+
+            return [
+                'status' => $response->status(),
+                'body' => $response->json()
+            ];
+        } catch (ConnectionException) {
+            return [
+                'status' => 500,
+                'body' => 'Connection error'
+            ];
+        }
     }
 
     public function getDoctorSchedules(User $user, ?string $doctorName = null): array
@@ -169,5 +180,24 @@ class RegOnlineService
             'message' => 'Tersimpan lokal (SIMRS belum terhubung)',
             'queue_number' => 'A-'.Str::padLeft((string) random_int(1, 999), 3, '0'),
         ];
+    }
+
+    public function getShdkPatient(User $user): array
+    {
+        try {
+            $response = Http::withHeaders($this->baseHeaders())
+                ->timeout((int) config('regonline.timeout', 15))
+                ->get($this->url . '/registrasionline/plugins/getShdk');
+
+            return [
+                'status' => $response->status(),
+                'body' => $response->body()
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => 500,
+                'body' => json_encode(['message' => 'Gagal koneksi ke SIMRS: ' . $e->getMessage()])
+            ];
+        }
     }
 }

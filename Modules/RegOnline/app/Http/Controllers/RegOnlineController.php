@@ -103,4 +103,56 @@ class RegOnlineController extends Controller
             'category' => $category,
         ]);
     }
+
+    public function getPatient(Request $request)
+    {
+        try {
+            $type = null;
+            $value = null;
+            $extraParams = [];
+
+            if ($request->has('NIK')) {
+                $type = 'NIK';
+                $value = $request->query('NIK');
+            } elseif ($request->has('KAP')) {
+                $type = 'KAP';
+                $value = $request->query('KAP');
+            } elseif ($request->has('NORM')) {
+                $type = 'NORM';
+                $value = $request->query('NORM');
+
+                if ($request->has('TANGGAL_LAHIR')) {
+                    $extraParams['TANGGAL_LAHIR'] = $request->query('TANGGAL_LAHIR');
+                } else {
+                    return $this->apiResponse(['message' => 'TANGGAL_LAHIR wajib diisi untuk pencarian NORM'], 422, false);
+                }
+            }
+
+            if (!$value) {
+                return $this->apiResponse(['message' => 'Parameter NIK, KAP, atau NORM diperlukan'], 400, false);
+            }
+
+            $result = $this->regonline->findPatientByIdentity($value, $type, $extraParams);
+            $body = is_string($result['body']) ? json_decode($result['body'], true) : $result['body'];
+            $isSuccess = ($result['status'] >= 200 && $result['status'] < 300);
+
+            return $this->apiResponse($body, $result['status'], $isSuccess);            
+        } catch (\Exception $e) {
+            return $this->apiResponse(null, 500, false);
+        }
+    }
+
+    public function shdk(Request $request)
+    {
+        try {
+            $result = $this->regonline->getShdkPatient($request->user());
+            $isSuccess = ($result['status'] >= 200 && $result['status'] < 300);
+            $body = is_string($result['body']) ? json_decode($result['body'], true) : $result['body'];
+
+            return $this->apiResponse($body, $result['status'], $isSuccess);
+
+        } catch (\Exception $e) {
+            return $this->apiResponse(['message' => $e->getMessage()], 500, false);
+        }
+    }
 }

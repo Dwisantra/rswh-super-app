@@ -1,7 +1,8 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import useConnection from './composables/useConnection'
 import useServer from './composables/useServer'
+import { autoRequestNotificationPermissionOnFirstOpen } from './services/notifications'
 
 const { online } = useConnection()
 const { serverAlive } = useServer()
@@ -16,6 +17,10 @@ const alertMessage = computed(() => {
     }
 
     return ''
+})
+
+onMounted(() => {
+  autoRequestNotificationPermissionOnFirstOpen()
 })
 </script>
 

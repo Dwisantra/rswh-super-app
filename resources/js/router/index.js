@@ -13,6 +13,8 @@ import AddFamilyMember from '../modules/dashboard/pages/AddFamilyMember.vue'
 import NewPatientRegistration from '../modules/dashboard/pages/NewPatientRegistration.vue'
 import RegistrationPage from '../modules/dashboard/pages/RegistrationPage.vue'
 import ProfilePage from '../modules/dashboard/pages/ProfilePage.vue'
+import UserDetailPage from '../modules/dashboard/pages/UserDetailPage.vue'
+import NotificationHistoryPage from '../modules/dashboard/pages/NotificationHistory.vue'
 import PromoPage from '../modules/dashboard/pages/PromoPage.vue'
 import MobilePlaceholder from '../modules/dashboard/pages/MobilePlaceholder.vue'
 import NotFound from '../modules/common/pages/NotFound.vue'
@@ -24,6 +26,8 @@ const routes = [
   { path: '/register', name: 'register', component: Register, meta: { guestOnly: true } },
   { path: '/', name: 'mobile-home', component: MobileHome },
   { path: '/profil', name: 'profile', component: ProfilePage },
+  { path: '/profil/detail', name: 'user-detail', component: UserDetailPage },
+  { path: '/profil/notifikasi', name: 'notification-history', component: NotificationHistoryPage },
   { path: '/keluarga', name: 'family-members', component: FamilyMembers },
   { path: '/keluarga/tambah', name: 'family-add', component: AddFamilyMember },
   { path: '/pasien-baru', name: 'new-patient-registration', component: NewPatientRegistration },

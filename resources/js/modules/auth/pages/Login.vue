@@ -77,6 +77,7 @@ async function submit() {
   try {
     const { data } = await axios.post('/api/login', form)
     applyLogin(data.token)
+    window.location.href = '/'
   } catch (e) {
     error.value = e.response?.data?.message || 'Login gagal, periksa kembali data Anda.'
   } finally {
