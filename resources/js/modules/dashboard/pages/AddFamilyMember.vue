@@ -17,7 +17,7 @@
           <button 
             v-for="mode in ['NORM', 'NIK']"  
             :key="mode"
-            @click="searchMode = mode; form.mrn = ''"
+            @click="searchMode = mode; form.norm = ''"
             class="flex-1 rounded-lg py-2 text-xs font-bold transition-all"
             :class="searchMode === mode ? 'bg-white text-teal-600 shadow-sm' : 'text-slate-500'"
           >
@@ -30,7 +30,7 @@
         </label>
         
         <input 
-          v-model.trim="form.mrn" 
+          v-model.trim="form.norm" 
           type="text" 
           :maxlength="searchMode === 'NIK' ? 16 : searchMode === 'NORM' ? 6 : 20" 
           @input="onlyNumber"
@@ -64,38 +64,43 @@
           @click="checkPatient"
           :disabled="loading"
         >
-          {{ loading ? 'Mengecek...' : 'Cek Data Pasien' }}
+          {{ loading ? 'Sedang Mencari...' : 'Cek Data Pasien' }}
         </button>
       </article>
 
-      <article v-if="checked && !matchedPatient" class="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-center">
+      <article v-if="checked" class="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-center">
         <p class="text-2xl">⚠️</p>
         <p class="mt-2 text-xl font-bold text-slate-900">Data tidak ditemukan</p>
-        <!-- <p class="mt-1 text-sm text-slate-600">Jika belum punya No RM, silakan daftar pasien baru terlebih dahulu.</p> -->
-        <!-- <RouterLink
-          class="mt-4 inline-block rounded-xl bg-teal-600 px-4 py-2 text-sm font-semibold text-white"
-          :to="{ path: '/pasien-baru', query: { relation: form.relation, mrn: form.mrn, birthDate: form.birthDate } }"
-        >
-          Daftar Pasien Baru
-        </RouterLink> -->
       </article>
 
       <article v-if="matchedPatient" class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
-        <p class="text-sm text-emerald-700">Data ditemukan di SIMRS</p>
+        <p class="text-sm text-emerald-700 font-medium">Data ditemukan</p>
         <p class="mt-1 text-lg font-bold text-slate-900">{{ matchedPatient.name }}</p>
-        <p class="text-sm text-slate-600">No RM: {{ matchedPatient.mrn }} · NIK: {{ matchedPatient.nik }}</p>
 
-        <p v-if="isDuplicate" class="mt-3 rounded-lg bg-amber-100 px-3 py-2 text-sm font-medium text-amber-700">
-          Data pasien ini sudah tersimpan di daftar keluarga.
-        </p>
+        <div class="mt-4">
+          <label class="mb-1 block text-sm font-semibold text-slate-700">Hubungan Keluarga</label>
+          <select 
+            v-model="form.relation" 
+            class="w-full rounded-xl border border-emerald-200 px-3 py-3 text-base bg-white focus:border-teal-500 outline-none"
+          >
+            <option value="" disabled>Pilih Hubungan</option>
+            <option 
+              v-for="opt in shdkOptions" 
+              :key="opt.ID" 
+              :value="opt.DESKRIPSI"
+            >
+              {{ opt.DESKRIPSI }}
+            </option>
+          </select>
+        </div>
 
         <button
           class="mt-4 w-full rounded-xl px-4 py-3 text-base font-semibold text-white"
-          :class="isDuplicate ? 'bg-slate-300' : 'bg-emerald-600'"
-          :disabled="isDuplicate"
+          :class="(isDuplicate || !form.relation) ? 'bg-slate-300' : 'bg-emerald-600'"
+          :disabled="isDuplicate || !form.relation || loading"
           @click="saveMember"
         >
-          {{ isDuplicate ? 'Sudah tersimpan' : 'Simpan ke Keluarga' }}
+          {{ loading ? 'Menyimpan...' : (isDuplicate ? 'Sudah tersimpan' : 'Simpan ke Keluarga') }}
         </button>
       </article>
     </main>
@@ -103,21 +108,46 @@
 </template>
 
 <script setup>
-import { computed, reactive, ref } from 'vue'
+import { onMounted, computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { useAlert } from '@/utils/useAlert';
 
 const { error, success, warning, info } = useAlert();
 const router = useRouter()
-const form = reactive({ relation: '', mrn: '', birthDate: '' })
+const form = reactive({ relation: '', norm: '', birthDate: '' })
 const searchMode = ref('NORM') // Default pilihan: NORM
 const checked = ref(false)
 const matchedPatient = ref(null)
 const loading = ref(false)
+const familyMembers = ref([])
+
+const shdkOptions = ref([]);
+const fetchShdk = async () => {
+  try {
+    const res = await axios.get('/api/v1/patients/shdk');
+    shdkOptions.value = res.data.data || [];
+  } catch (err) {
+    console.error("Gagal memuat data SHDK", err);
+  }
+};
+
+onMounted(async () => { // <--- Tambahkan async di sini
+  fetchShdk();
+  try {
+    const res = await axios.get('/api/v1/patients/family');
+    familyMembers.value = res.data; 
+    
+    if (res.data.length > 0) {
+      info('Anda sudah memiliki data keluarga tersimpan.');
+    }
+  } catch (err) {
+    console.error("Gagal cek data keluarga", err);
+  }
+});
 
 const checkPatient = async () => {
-  if (!form.mrn) {
+  if (!form.norm) {
     error(`Masukkan ${searchMode.value}`);
     return;
   }
@@ -125,43 +155,39 @@ const checkPatient = async () => {
   // Siapkan params berdasarkan mode yang dipilih
   let searchParams = {};
   if (searchMode.value === 'NIK') {
-    searchParams = { NIK: form.mrn };
+    searchParams = { NIK: form.norm };
   } else if (searchMode.value === 'NORM') {
     if (!form.birthDate) {
       error('Tanggal Lahir wajib untuk No. RM');
       return;
     }
-    searchParams = { NORM: form.mrn, TANGGAL_LAHIR: form.birthDate };
+    searchParams = { NORM: form.norm, TANGGAL_LAHIR: form.birthDate };
   } else {
-    searchParams = { KAP: form.mrn };
+    searchParams = { KAP: form.norm };
   }
 
   loading.value = true;
-  checked.value = true;
   matchedPatient.value = null;
 
   try {
-    const response = await axios.get('/api/v1/regonline/patient/search', {
-      params: searchParams
-    });
-
+    const response = await axios.get('/api/v1/patients/search', { params: searchParams });
     const result = response.data;
+
+    console.log(result);
+    
     
     if (result.success && result.total > 0) {
-      const dataPasien = result.data[0];
-      matchedPatient.value = {
-        name: dataPasien.NAMA || dataPasien.name,
-        mrn: dataPasien.NORM || dataPasien.mrn,
-        nik: dataPasien.NIK || dataPasien.nik,
-        birthDate: dataPasien.TANGGAL_LAHIR || dataPasien.birthDate
-      };
+      matchedPatient.value = extractPatientData(result.data[0]); 
+      
+      form.relation = '';
+      checked.value = false;
       info('Pasien ditemukan!');
     } else {
+      checked.value = true;
       error('Data tidak ditemukan');
     }
-  } catch (error) {
-    const errorMsg = error.response?.data?.message || 'Gagal terhubung ke server';
-    error(errorMsg);
+  } catch (err) {
+    error(err.response?.data?.message || 'Gagal terhubung ke server');
   } finally {
     loading.value = false;
   }
@@ -173,36 +199,57 @@ const onlyNumber = (event) => {
   if (searchMode.value !== 'KAP') {
     val = val.replace(/[^0-9]/g, '');
   }
-  form.mrn = val;
-}
-
-const getStoredMembers = () => {
-  try {
-    return JSON.parse(localStorage.getItem('family_members') || '[]')
-  } catch (_) {
-    return []
-  }
+  form.norm = val;
 }
 
 const isDuplicate = computed(() => {
   if (!matchedPatient.value) return false
-  return getStoredMembers().some(
-    (item) => item.mrn === matchedPatient.value.mrn && item.birthDate === matchedPatient.value.birthDate
+  return familyMembers.value.some(
+    (item) => item.mrn === matchedPatient.value.norm
   )
 })
 
-const saveMember = () => {
-  if (!matchedPatient.value || isDuplicate.value || !form.relation) return
+const extractPatientData = (dataPasien) => {
+  const identitas = dataPasien.KARTUIDENTITAS?.find(k => k.JENIS === '1');
+  
+  return {
+    name: dataPasien.NAMA,
+    panggilan: dataPasien.PANGGILAN,
+    gelar_depan: dataPasien.GELAR_DEPAN,
+    gelar_belakang: dataPasien.GELAR_BELAKANG,
+    norm: dataPasien.NORM,
+    nik: identitas ? identitas.NOMOR : (dataPasien.NIK || ''),
+    birth_date: dataPasien.TANGGAL_LAHIR?.split(' ')[0],
+    birth_place: dataPasien.REFERENSI?.TEMPATLAHIR?.DESKRIPSI || dataPasien.TEMPAT_LAHIR,
+    gender: dataPasien.REFERENSI?.JENISKELAMIN?.DESKRIPSI || dataPasien.JENIS_KELAMIN,
+    religion: dataPasien.REFERENSI?.AGAMA?.DESKRIPSI,
+    address: dataPasien.ALAMAT,
+    occupation: dataPasien.REFERENSI?.PEKERJAAN?.DESKRIPSI,
+    marital_status: dataPasien.REFERENSI?.STATUS_PERKAWINAN?.DESKRIPSI
+  };
+};
 
-  const saved = getStoredMembers()
-  saved.push({
-    ...matchedPatient.value,
-    relation: form.relation
-  })
-
-  localStorage.setItem('family_members', JSON.stringify(saved))
-  router.push('/keluarga')
-}
+const saveMember = async () => {
+  if (!matchedPatient.value || !form.relation) {
+    warning('Pilih hubungan keluarga terlebih dahulu');
+    return;
+  }
+  
+  loading.value = true;
+  try {
+    await axios.post('/api/v1/patients/family', {
+      ...matchedPatient.value, 
+      relation: form.relation
+    });
+    
+    success('Data pasien berhasil disimpan ke akun Anda');
+    router.push('/keluarga');
+  } catch (err) {
+    error(err.response?.data?.message || 'Gagal menyimpan data');
+  } finally {
+    loading.value = false;
+  }
+};
 
 const formatDateDisplay = (dateString) => {
   if (!dateString) return ''
@@ -213,4 +260,8 @@ const formatDateDisplay = (dateString) => {
     year: 'numeric'
   }).format(date)
 }
+
+const hasKepalaKeluarga = computed(() => {
+  return false; 
+});
 </script>

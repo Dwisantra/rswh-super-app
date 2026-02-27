@@ -136,14 +136,14 @@ const logout = async () => {
 
   try {
     await axios.post('/api/v1/logout')
-  } catch (_) {
+  } catch (error) {
     // abaikan jika API logout gagal
+  } finally {
+    localStorage.removeItem('auth_token')
+    localStorage.removeItem('family_members')
+    delete axios.defaults.headers.common['Authorization']
+    window.location.href = '/login'
   }
-
-  localStorage.removeItem('auth_token')
-  delete axios.defaults.headers.common.Authorization
-  await router.push('/login')
-  isLoggingOut.value = false
 }
 
 onMounted(() => {

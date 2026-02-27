@@ -66,8 +66,9 @@ const form = reactive({
 })
 
 const applyLogin = (token) => {
-  localStorage.setItem('token', token)
+  localStorage.setItem('auth_token', token)
   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+  localStorage.removeItem('family_members');
 }
 
 async function submit() {
@@ -75,7 +76,7 @@ async function submit() {
   loading.value = true
 
   try {
-    const { data } = await axios.post('/api/login', form)
+    const { data } = await axios.post('/api/login', form)    
     applyLogin(data.token)
     window.location.href = '/'
   } catch (e) {

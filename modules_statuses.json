@@ -1,4 +1,5 @@
 {
     "Auth": true,
-    "RegOnline": true
+    "RegOnline": true,
+    "Patient": true
 }

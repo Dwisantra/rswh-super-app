@@ -31,13 +31,13 @@ class AuthController extends Controller
 
         $user = User::query()
             ->where('email', $validated['identifier'])
-            ->orWhere('nik', $validated['identifier'])
-            ->orWhere('norm', $validated['identifier'])
+            // ->orWhere('nik', $validated['identifier'])
+            // ->orWhere('norm', $validated['identifier'])
             ->first();
 
         if (! $user || ! Hash::check($validated['password'], $user->password)) {
             return response()->json([
-                'message' => 'Identitas/NIK/No RM atau kata sandi salah',
+                'message' => 'Email atau kata sandi salah',
             ], 401);
         }
 

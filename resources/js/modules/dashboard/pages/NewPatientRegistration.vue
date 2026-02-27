@@ -113,7 +113,6 @@ const getList = (key) => {
 const submitNewPatient = () => {
   if (!canSubmit.value) return
 
-  const extraSimrs = getList('simrs_patients_extra')
   const familyMembers = getList('family_members')
 
   const generatedMrn = form.mrn || `9${Date.now().toString().slice(-8)}`
@@ -134,7 +133,6 @@ const submitNewPatient = () => {
     familyMembers.push({ ...patient, relation })
   }
 
-  localStorage.setItem('simrs_patients_extra', JSON.stringify(extraSimrs))
   localStorage.setItem('family_members', JSON.stringify(familyMembers))
   router.push('/keluarga')
 }

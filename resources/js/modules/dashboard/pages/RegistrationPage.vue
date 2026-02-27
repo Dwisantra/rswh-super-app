@@ -17,7 +17,7 @@
         <label class="mb-1 block text-sm text-slate-600">Pasien</label>
         <select v-model="form.selectedMrn" class="w-full rounded-xl border border-slate-200 px-3 py-3 text-base">
           <option value="">Pilih pasien tersimpan</option>
-          <option v-for="member in familyMembers" :key="member.mrn" :value="member.mrn">
+          <option v-for="member in familyMembers" :key="member.id" :value="member.mrn">
             {{ member.name }} ({{ member.relation }})
           </option>
         </select>
@@ -51,30 +51,60 @@
 </template>
 
 <script setup>
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, onMounted } from 'vue'
+import axios from 'axios'
 import MobileBottomNav from '../components/MobileBottomNav.vue'
-import { doctorSchedules } from '../data/mobileDashboardData'
 import PageHeader from '../components/Header.vue'
+import { doctorSchedules } from '../data/mobileDashboardData'
 
-const form = reactive({ selectedMrn: '', clinic: '', visitDate: '' })
+const familyMembers = ref([])
 const successMessage = ref('')
+const loading = ref(false)
 
-const familyMembers = computed(() => {
-  try {
-    return JSON.parse(localStorage.getItem('family_members') || '[]')
-  } catch (_) {
-    return []
-  }
+const form = reactive({ 
+  selectedMrn: '', 
+  clinic: '', 
+  visitDate: '' 
 })
 
 const clinics = [...new Set(doctorSchedules.map((item) => item.clinic))]
 
+const fetchFamily = async () => {
+  try {
+    const res = await axios.get('/api/v1/patients/family')
+    familyMembers.value = res.data
+    
+    // Set otomatis pasien default jika ada di database
+    const defaultPatient = res.data.find(p => p.is_default)
+    if (defaultPatient) {
+      form.selectedMrn = defaultPatient.mrn
+    }
+  } catch (err) {
+    console.error("Gagal memuat pasien", err)
+  }
+}
+
 const canSubmit = computed(() => form.selectedMrn && form.clinic && form.visitDate)
 
-const submitRegistration = () => {
+const submitRegistration = async () => {
   if (!canSubmit.value) return
-  successMessage.value = 'Registrasi berhasil disimpan menggunakan data pasien yang sudah terverifikasi.'
-  form.clinic = ''
-  form.visitDate = ''
+  
+  loading.value = true
+  try {
+    // Sesuaikan endpoint ini dengan backend pendaftaran Anda
+    // await axios.post('/api/v1/registrations', form)
+    
+    successMessage.value = 'Registrasi berhasil disimpan menggunakan data pasien yang sudah terverifikasi.'
+    
+    // Reset form setelah sukses (opsional)
+    form.clinic = ''
+    form.visitDate = ''
+  } catch (err) {
+    console.error("Gagal mendaftar", err)
+  } finally {
+    loading.value = false
+  }
 }
+
+onMounted(fetchFamily)
 </script>

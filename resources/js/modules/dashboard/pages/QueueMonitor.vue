@@ -36,13 +36,13 @@
                 <div class="h-2.5 w-full rounded-full bg-slate-200"></div>
                 </div>
             </div>
-            </div>
+        </div>
 
-            <!-- Tidak Ada Data -->
-            <div v-else-if="queues.length === 0" class="py-16 text-center text-slate-500">
-                <font-awesome-icon icon="ticket" class="mb-3 text-4xl text-slate-300"/>
-                <p>Belum ada antrian yang dipanggil.</p>
-            </div>
+        <!-- Tidak Ada Data -->
+        <div v-else-if="queues.length === 0" class="py-16 text-center text-slate-500">
+            <font-awesome-icon icon="ticket" class="mb-3 text-4xl text-slate-300"/>
+            <p>Belum ada antrian yang dipanggil.</p>
+        </div>
         
         <template v-else>
             <article
