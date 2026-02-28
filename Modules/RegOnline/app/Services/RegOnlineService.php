@@ -92,16 +92,27 @@ class RegOnlineService
                 ->get($this->url.'/registrasionline/plugins/getJadwalDokterHfis');
 
             if ($response->successful()) {
-                $data = Arr::get($response->json(), 'response.data', $response->json());
+                // Jika sukses, kembalikan json aslinya
+                $data = $response->json();
                 return $this->filterDoctorSchedules($data, $doctorName);
+                
             }
-        } catch (ConnectionException) {
-        }
 
-        return [
-            'status' => $response->status(),
-            'body' => $response->body()
-        ];
+            // Jika statusnya bukan 2xx
+            return [
+                'status' => false,
+                'total'  => 0,
+                'data'   => [],
+                'message' => 'API Error: ' . $response->status()
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => false,
+                'total'  => 0,
+                'data'   => [],
+                'message' => 'Connection Error: ' . $e->getMessage()
+            ];
+        }
         return $this->filterDoctorSchedules($fallback, $doctorName);
     }
 
@@ -128,16 +139,26 @@ class RegOnlineService
                 ->get($this->url.'/registrasionline/plugins/getKetersediaanTempatTidur');
 
             if ($response->successful()) {
-                return Arr::get($response->json(), 'response.data', $response->json());
+                // Jika sukses, kembalikan json aslinya
+                return $response->json();
             }
-        } catch (ConnectionException) {
-        }
 
-        return [
-            ['room' => 'Kelas 1', 'available' => 4, 'total' => 12],
-            ['room' => 'Kelas 2', 'available' => 7, 'total' => 20],
-            ['room' => 'ICU', 'available' => 1, 'total' => 8],
-        ];
+            // Jika statusnya bukan 2xx
+            return [
+                'status' => false,
+                'total'  => 0,
+                'data'   => [],
+                'message' => 'API Error: ' . $response->status()
+            ];
+
+        } catch (\Exception $e) {
+            return [
+                'status' => false,
+                'total'  => 0,
+                'data'   => [],
+                'message' => 'Connection Error: ' . $e->getMessage()
+            ];
+        }
     }
 
     public function getAllClinicQueues(User $user): array
@@ -148,39 +169,49 @@ class RegOnlineService
                 ->get($this->url.'/registrasionline/plugins/getMonitoringAntrianPoli');
 
             if ($response->successful()) {
-                return Arr::get($response->json(), 'response.data', $response->json());
-            }
-        } catch (ConnectionException) {
-        }
-
-        return [
-            'status' => $response->status(),
-            'body' => $response->body()
-        ];
-    }
-
-    public function submitRegistration(User $user, array $payload): array
-    {
-        $payload['patient_key'] = $user->nik ?: $user->norm;
-        $payload['family_code'] = $user->family_code;
-
-        try {
-            $response = Http::withHeaders($this->headers($user))
-                ->timeout((int) config('regonline.timeout', 15))
-                ->post($this->url.'/registrasionline/rsonline/postPendaftaran', $payload);
-
-            if ($response->successful()) {
+                // Jika sukses, kembalikan json aslinya
                 return $response->json();
             }
-        } catch (ConnectionException) {
-        }
 
-        return [
-            'success' => true,
-            'message' => 'Tersimpan lokal (SIMRS belum terhubung)',
-            'queue_number' => 'A-'.Str::padLeft((string) random_int(1, 999), 3, '0'),
-        ];
+            // Jika statusnya bukan 2xx
+            return [
+                'status' => false,
+                'total'  => 0,
+                'data'   => [],
+                'message' => 'API Error: ' . $response->status()
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => false,
+                'total'  => 0,
+                'data'   => [],
+                'message' => 'Connection Error: ' . $e->getMessage()
+            ];
+        }
     }
+
+    // public function submitRegistration(User $user, array $payload): array
+    // {
+    //     $payload['patient_key'] = $user->nik ?: $user->norm;
+    //     $payload['family_code'] = $user->family_code;
+
+    //     try {
+    //         $response = Http::withHeaders($this->headers($user))
+    //             ->timeout((int) config('regonline.timeout', 15))
+    //             ->post($this->url.'/registrasionline/rsonline/postPendaftaran', $payload);
+
+    //         if ($response->successful()) {
+    //             return $response->json();
+    //         }
+    //     } catch (ConnectionException) {
+    //     }
+
+    //     return [
+    //         'success' => true,
+    //         'message' => 'Tersimpan lokal (SIMRS belum terhubung)',
+    //         'queue_number' => 'A-'.Str::padLeft((string) random_int(1, 999), 3, '0'),
+    //     ];
+    // }
 
     public function getShdkPatient(User $user): array
     {
@@ -196,7 +227,7 @@ class RegOnlineService
         } catch (\Exception $e) {
             return [
                 'status' => 500,
-                'body' => json_encode(['message' => 'Gagal koneksi ke SIMRS: ' . $e->getMessage()])
+                'body' => json_encode(['message' => 'Gagal koneksi: ' . $e->getMessage()])
             ];
         }
     }
@@ -209,17 +240,23 @@ class RegOnlineService
                 ->get($this->url . '/registrasionline/plugins/getRuangan');
 
             if ($response->successful()) {
-                return Arr::get($response->json(), 'response.data', $response->json());
+                // Jika sukses, kembalikan json aslinya
+                return $response->json();
             }
 
+            // Jika statusnya bukan 2xx
             return [
-                'status' => $response->status(),
-                'body' => $response->body(),
+                'status' => false,
+                'total'  => 0,
+                'data'   => [],
+                'message' => 'API Error: ' . $response->status()
             ];
-        } catch (ConnectionException) {
+        } catch (\Exception $e) {
             return [
-                'status' => 500,
-                'body' => json_encode(['message' => 'Gagal koneksi ke SIMRS: ' . $e->getMessage()])
+                'status' => false,
+                'total'  => 0,
+                'data'   => [],
+                'message' => 'Connection Error: ' . $e->getMessage()
             ];
         }
     }
@@ -235,17 +272,23 @@ class RegOnlineService
                 ]);
 
             if ($response->successful()) {
-                return Arr::get($response->json(), 'response.data', $response->json());
+                // Jika sukses, kembalikan json aslinya
+                return $response->json();
             }
 
+            // Jika statusnya bukan 2xx
             return [
-                'status' => $response->status(),
-                'body' => $response->body(),
+                'status' => false,
+                'total'  => 0,
+                'data'   => [],
+                'message' => 'API Error: ' . $response->status()
             ];
-        } catch (ConnectionException) {
+        } catch (\Exception $e) {
             return [
-                'status' => 500,
-                'body' => json_encode(['message' => 'Gagal koneksi ke SIMRS: ' . $e->getMessage()])
+                'status' => false,
+                'total'  => 0,
+                'data'   => [],
+                'message' => 'Connection Error: ' . $e->getMessage()
             ];
         }
     }
@@ -263,15 +306,24 @@ class RegOnlineService
                 ->get($this->url . '/registrasionline/plugins/getCaraBayar', $query);
 
             if ($response->successful()) {
-                return Arr::get($response->json(), 'response.data', $response->json());
+                // Jika sukses, kembalikan json aslinya
+                return $response->json();
             }
 
+            // Jika statusnya bukan 2xx
             return [
-                'status' => $response->status(),
-                'body' => $response->body(),
+                'status' => false,
+                'total'  => 0,
+                'data'   => [],
+                'message' => 'API Error: ' . $response->status()
             ];
-        } catch (ConnectionException) {
-            return [];
+        } catch (\Exception $e) {
+            return [
+                'status' => false,
+                'total'  => 0,
+                'data'   => [],
+                'message' => 'Connection Error: ' . $e->getMessage()
+            ];
         }
     }
 }
