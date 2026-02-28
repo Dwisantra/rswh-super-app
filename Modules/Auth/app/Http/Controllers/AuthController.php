@@ -4,23 +4,19 @@ namespace Modules\Auth\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Modules\Auth\Services\EmailOtpService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Modules\Auth\Emails\EmailOtpMail;
 use Modules\RegOnline\Services\RegOnlineService;
 
 class AuthController extends Controller
 {
     private const EMAIL_OTP_TTL_MINUTES = 10;
 
-    public function __construct(protected RegOnlineService $regonline) {}
-
-    private function getOtpCacheKey(string $email): string
-    {
-        return 'auth:email_otp:'.hash('sha256', strtolower(trim($email)));
-    }
+    public function __construct(
+        protected RegOnlineService $regonline,
+        protected EmailOtpService $emailOtpService,
+    ) {}
 
     public function login(Request $request)
     {
@@ -61,21 +57,17 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        if (!empty($validated['email'])) {
-            $otpCache = Cache::get($this->getOtpCacheKey($validated['email']));
-            $otpCode = $otpCache['otp'] ?? null;
-
-            if (!$otpCode || $validated['email_otp'] !== $otpCode) {
-                return response()->json([
-                    'message' => 'Kode OTP email tidak valid atau sudah kedaluwarsa.',
-                    'errors' => [
-                        'email_otp' => ['Kode OTP email tidak valid atau sudah kedaluwarsa.'],
-                    ],
-                ], 422);
-            }
+        if (! empty($validated['email'])
+            && ! $this->emailOtpService->verify('register', $validated['email'], $validated['email_otp'])) {
+            return response()->json([
+                'message' => 'Kode OTP email tidak valid atau sudah kedaluwarsa.',
+                'errors' => [
+                    'email_otp' => ['Kode OTP email tidak valid atau sudah kedaluwarsa.'],
+                ],
+            ], 422);
         }
 
-        $simrsPatient = $this->regonline->findPatientByNik($validated['nik']);
+        $simrsPatient = $this->regonline->findPatientByIdentity($validated['nik']);
         $isExistingPatient = $simrsPatient['status'] == 200;
 
         $resolvedNorm = $validated['norm']
@@ -97,8 +89,8 @@ class AuthController extends Controller
 
         $token = $user->createToken('patient-app-token')->plainTextToken;
 
-        if (!empty($validated['email'])) {
-            Cache::forget($this->getOtpCacheKey($validated['email']));
+        if (! empty($validated['email'])) {
+            $this->emailOtpService->forget('register', $validated['email']);
         }
 
         return response()->json([
@@ -112,20 +104,31 @@ class AuthController extends Controller
 
     public function sendRegisterEmailOtp(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email',
-        ]);
+        $isProfileUpdate = $request->user() && $request->input('purpose') === 'profile_update';
 
-        $otp = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $rules = [
+            'email' => 'required|string|email|max:255',
+        ];
 
-        Cache::put($this->getOtpCacheKey($validated['email']), [
-            'otp' => $otp,
-            'name' => $validated['name'],
-            'sent_at' => now()->toIso8601String(),
-        ], now()->addMinutes(self::EMAIL_OTP_TTL_MINUTES));
+        if ($isProfileUpdate) {
+            $rules['email'] .= '|unique:users,email,'.$request->user()->id;
+            $rules['name'] = 'nullable|string|max:255';
+        } else {
+            $rules['email'] .= '|unique:users,email';
+            $rules['name'] = 'required|string|max:255';
+        }
 
-        Mail::to($validated['email'])->send(new EmailOtpMail($otp, $validated['name'], self::EMAIL_OTP_TTL_MINUTES));
+        $validated = $request->validate($rules);
+
+        $name = $validated['name']
+            ?? $request->user()?->name
+            ?? 'Pengguna';
+
+        $scope = $isProfileUpdate
+            ? 'profile_update:'.$request->user()->id
+            : 'register';
+
+        $this->emailOtpService->send($scope, $validated['email'], $name, self::EMAIL_OTP_TTL_MINUTES);
 
         return response()->json([
             'message' => 'OTP berhasil dikirim ke email.',

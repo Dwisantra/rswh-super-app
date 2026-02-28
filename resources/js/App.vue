@@ -25,7 +25,6 @@ onMounted(() => {
 </script>
 
 <template>
-
   <transition name="slide-down">
       <div v-if="alertMessage" class="connection-alert" role="status" aria-live="polite">
           {{ alertMessage }}

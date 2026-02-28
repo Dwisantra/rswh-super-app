@@ -13,5 +13,8 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         Route::post('/bmi', [RegOnlineController::class, 'calculateBmi']);
         Route::get('/queue-monitor', [RegOnlineController::class, 'monitorClinicQueues']);
         Route::get('/operation-schedules/patient', [RegOnlineController::class, 'patientOperationSchedules']);
+        Route::get('/clinic', [RegOnlineController::class, 'clinic']);
+        Route::get('/doctor-schedules-by-clinic', [RegOnlineController::class, 'doctorSchedulesByClinic']);
+        Route::get('/payment-methods', [RegOnlineController::class, 'paymentMethods']);
     });
 });

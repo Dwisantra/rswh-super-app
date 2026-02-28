@@ -63,4 +63,31 @@ class RegOnlineController extends Controller
             'category' => $category,
         ]);
     }
+
+    public function clinic(Request $request)
+    {
+        return response()->json($this->regonline->getClinic($request->user()));
+    }
+
+    public function doctorSchedulesByClinic(Request $request)
+    {
+        $validated = $request->validate([
+            'poli' => 'required|string',
+            'day_code' => 'required|integer|min:1|max:7',
+        ]);
+
+        return response()->json($this->regonline->getDoctorScheduleByClinic(
+            $request->user(),
+            $validated['poli'],
+            (int) $validated['day_code']
+        ));
+    }
+
+    public function paymentMethods(Request $request)
+    {
+        return response()->json($this->regonline->getPaymentMethods(
+            $request->user(),
+            $request->query('ruangan_penjamin')
+        ));
+    }
 }

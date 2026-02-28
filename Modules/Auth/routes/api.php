@@ -16,6 +16,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     // Route::apiResource('auths', AuthController::class)->names('auth');
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/profile/email-otp', [AuthController::class, 'sendRegisterEmailOtp']);
     Route::get('/notifications/history', [NotificationController::class, 'history']);
     Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
     Route::post('/push-subscribe', [NotificationController::class, 'subscribe']);

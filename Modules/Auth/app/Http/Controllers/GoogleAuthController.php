@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 
 class GoogleAuthController extends Controller
 {
@@ -57,9 +56,6 @@ class GoogleAuthController extends Controller
                 'profile_completed' => 1,
             ]
         );
-
-        // login session laravel (penting!)
-        Auth::login($user, true);
 
         // kalau pakai sanctum token:
         $token = $user->createToken('web')->plainTextToken;

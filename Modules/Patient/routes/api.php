@@ -10,6 +10,8 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         Route::get('/family', [PatientController::class, 'index']);
         Route::post('/family', [PatientController::class, 'store']);
         Route::post('/family/{id}/set-default', [PatientController::class, 'setDefault']);
+        Route::get('/profile', [PatientController::class, 'profile']);
+        Route::put('/profile', [PatientController::class, 'updateProfile']);
     });
     // Route::apiResource('patients', PatientController::class)->names('patient');
 });

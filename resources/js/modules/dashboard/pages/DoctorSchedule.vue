@@ -6,128 +6,118 @@
       backTo="/"
     />
 
-    <main class="space-y-3 px-4 pt-4">
-      <section class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
-        <p class="mb-2 text-sm font-medium text-slate-700">Filter Jadwal</p>
+    <PullToRefresh v-model="refreshing" @refresh="onRefresh">
+      <main class="space-y-3 px-4 pt-4">
+        <section class="sticky top-0 z-10 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+          <p class="mb-2 text-sm font-medium text-slate-700">Filter Jadwal</p>
 
-        <div class="grid grid-cols-1 gap-2">
-          <!-- filter by nama -->
-           <div class="search-box">
-            <font-awesome-icon icon="magnifying-glass" class="search-icon" />
-            <input
-              v-model.trim="searchName"
-              type="text"
-              placeholder="Cari nama dokter..."
-              class="search-input"
-            />
-          </div>          
+          <div class="grid grid-cols-1 gap-2">
+            <!-- filter by nama -->
+            <div class="search-box">
+              <font-awesome-icon icon="magnifying-glass" class="search-icon" />
+              <input
+                v-model.trim="searchName"
+                type="text"
+                placeholder="Cari nama dokter..."
+                class="search-input"
+              />
+            </div>          
 
-          <!-- filter by tanggal -->
-          <!-- <input 
-            v-model="selectedDate" 
-            type="date" 
-            class="rounded-xl border border-slate-200 px-3 py-2 text-sm" 
-          /> -->
+            <!-- filter by tanggal -->
+            <!-- <input 
+              v-model="selectedDate" 
+              type="date" 
+              class="rounded-xl border border-slate-200 px-3 py-2 text-sm" 
+            /> -->
 
-          <!-- filter by poli -->
-          <select v-model="selectedClinic" class="rounded-xl border border-slate-200 px-3 py-2 text-sm">
-            <option value="">Semua Poliklinik</option>
-            <option v-for="clinic in uniqueClinics" :key="clinic" :value="clinic">{{ clinic }}</option>
-          </select>
-        </div>
-      </section>
-
-      <!-- Skeleton Loading -->
-      <div v-if="loading" class="space-y-3">
-        <div
-          v-for="n in 4"
-          :key="n"
-          class="animate-pulse rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
-        >
-          <div class="flex items-start justify-between gap-3">
-            <div class="space-y-2 w-full">
-              <div class="h-5 w-40 rounded bg-slate-200"></div>
-              <div class="h-4 w-24 rounded bg-slate-200"></div>
-              <div class="h-4 w-28 rounded bg-slate-200"></div>
-            </div>
-            <div class="h-6 w-20 rounded-full bg-slate-200"></div>
+            <!-- filter by poli -->
+            <select v-model="selectedClinic" class="rounded-xl border border-slate-200 px-3 py-2 text-sm">
+              <option value="">Semua Poliklinik</option>
+              <option v-for="clinic in uniqueClinics" :key="clinic" :value="clinic">{{ clinic }}</option>
+            </select>
           </div>
+        </section>
 
-          <div class="mt-4 space-y-2">
-            <div class="h-3 w-full rounded bg-slate-200"></div>
-            <div class="h-2.5 w-full rounded-full bg-slate-200"></div>
+        <!-- Skeleton Loader -->
+        <SkeletonLoader 
+          :loading="loading && !refreshing" 
+          type="card" 
+          :count="4" 
+        />
+
+        <template v-if="!loading || refreshing">
+          <div v-if="filteredSchedules.length === 0" class="py-16 text-center text-slate-500">
+            <font-awesome-icon icon="bed" class="mb-3 text-4xl text-slate-300"/>
+            <p>Tidak ada jadwal dokter tersedia</p>
           </div>
-        </div>
-      </div>
-
-      <!-- Tidak Ada Data -->
-      <div v-else-if="filteredSchedules.length === 0" class="py-16 text-center text-slate-500">
-        <font-awesome-icon icon="bed" class="mb-3 text-4xl text-slate-300"/>
-        <p>Tidak ada data ketersediaan tempat tidur</p>
-      </div>
-      
-      <template v-else>        
-        <article
-          v-for="doc in paginatedSchedules"
-          :key="doc.id"
-          class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md"
-        >
-          <div class="flex items-start gap-3">
-            <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-teal-100 text-teal-600">
-              <font-awesome-icon icon="user-doctor" class="text-lg" />
-            </div>
-
-            <!-- nama & poli -->
-            <div class="flex-1">
-              <p class="text-base font-semibold text-slate-900 leading-tight">
-                {{ doc.doctor }}
-              </p>
-              <div class="mt-1">
-                <span class="inline-block rounded-full bg-cyan-50 px-2.5 py-1 text-xs font-medium text-cyan-700">
-                  <font-awesome-icon icon="stethoscope"/>
-                  {{ doc.clinic }}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <!-- jadwal praktek -->
-          <div class="mt-4 border-t pt-3 space-y-2">
-            <div
-              v-for="(sch, i) in doc.schedules"
-              :key="i"
-              class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2"
+          
+          <template v-else>
+            <article
+              v-for="doc in paginatedSchedules"
+              :key="doc.id"
+              class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md"
             >
-              <span class="text-sm font-medium text-slate-700">
-                {{ sch.day }}
-              </span>
-              <div class="flex items-center gap-2 text-sm text-slate-600">
-                <font-awesome-icon icon="clock" class="text-teal-500" />
-                <span>{{ sch.time }}</span>
-              </div>
-            </div>
-          </div>
-        </article>
-      </template>
-      <Pagination
-        v-model="currentPage"
-        :total-items="filteredSchedules.length"
-        :items-per-page="perPage"
-      />
-    </main>
+              <div class="flex items-start gap-3">
+                <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-teal-100 text-teal-600">
+                  <font-awesome-icon icon="user-doctor" class="text-lg" />
+                </div>
 
+                <!-- nama & poli -->
+                <div class="flex-1">
+                  <p class="text-base font-semibold text-slate-900 leading-tight">
+                    {{ doc.doctor }}
+                  </p>
+                  <div class="mt-1">
+                    <span class="inline-block rounded-full bg-cyan-50 px-2.5 py-1 text-xs font-medium text-cyan-700">
+                      <font-awesome-icon icon="stethoscope"/>
+                      {{ doc.clinic }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- jadwal praktek -->
+              <div class="mt-4 border-t pt-3 space-y-2">
+                <div
+                  v-for="(sch, i) in doc.schedules"
+                  :key="i"
+                  class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2"
+                >
+                  <span class="text-sm font-medium text-slate-700">
+                    {{ sch.day }}
+                  </span>
+                  <div class="flex items-center gap-2 text-sm text-slate-600">
+                    <font-awesome-icon icon="clock" class="text-teal-500" />
+                    <span>{{ sch.time }}</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </template>
+        </template>
+        <Pagination
+          v-model="currentPage"
+          :total-items="filteredSchedules.length"
+          :items-per-page="perPage"
+        />
+      </main>
+    </PullToRefresh>
+    
     <MobileBottomNav />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
+import PullToRefresh from '../components/PullToRefresh.vue'
+import SkeletonLoader from '../components/SkeletonLoader.vue'
 import axios from 'axios'
 import Pagination from '../components/Pagination.vue'
 import MobileBottomNav from '../components/MobileBottomNav.vue'
 import PageHeader from '../components/Header.vue'
 
 const schedules = ref([])
+const refreshing = ref(false)
 const selectedDate = ref('')
 const selectedClinic = ref('')
 const searchName = ref('')
@@ -155,6 +145,14 @@ const getDayName = (dateStr) => {
   ]
   const date = new Date(dateStr)
   return days[date.getDay()]
+}
+
+const onRefresh = async () => {
+  try {
+    await getSchedules()
+  } finally {
+    refreshing.value = false
+  }
 }
 
 const getSchedules = async () => {

@@ -46,7 +46,14 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0}
+    }
+  },
 })
 
 router.beforeEach((to) => {
@@ -60,8 +67,8 @@ router.beforeEach((to) => {
   }
   
   const token = localStorage.getItem('auth_token')
-
-  if (to.meta.guestOnly && token) {
+  
+  if (to.meta.guestOnly && token && to.name !== 'login') {
     return { name: 'mobile-home' }
   }
 

@@ -111,9 +111,9 @@
 import { onMounted, computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import { useAlert } from '@/utils/useAlert';
+import { useNotify } from '@/utils/useNotify';
 
-const { error, success, warning, info } = useAlert();
+const { error, success, warn, info } = useNotify();
 const router = useRouter()
 const form = reactive({ relation: '', norm: '', birthDate: '' })
 const searchMode = ref('NORM') // Default pilihan: NORM
@@ -123,26 +123,29 @@ const loading = ref(false)
 const familyMembers = ref([])
 
 const shdkOptions = ref([]);
-const fetchShdk = async () => {
-  try {
-    const res = await axios.get('/api/v1/patients/shdk');
-    shdkOptions.value = res.data.data || [];
-  } catch (err) {
-    console.error("Gagal memuat data SHDK", err);
-  }
-};
 
-onMounted(async () => { // <--- Tambahkan async di sini
-  fetchShdk();
+onMounted(async () => {
+  loading.value = true;
   try {
-    const res = await axios.get('/api/v1/patients/family');
-    familyMembers.value = res.data; 
-    
-    if (res.data.length > 0) {
-      info('Anda sudah memiliki data keluarga tersimpan.');
-    }
+    const [shdkRes, familyRes] = await Promise.all([
+      axios.get('/api/v1/patients/shdk'),
+      axios.get('/api/v1/patients/family')
+    ]);
+
+    shdkOptions.value = shdkRes.data.data || [];
+    familyMembers.value = familyRes.data || [];
+
+    // if (familyMembers.value.length > 0) {
+    //   info('Anda sudah memiliki data keluarga tersimpan.');
+    // }
   } catch (err) {
-    console.error("Gagal cek data keluarga", err);
+    if (err.code === 'ECONNABORTED') {
+      error('Koneksi ke server lambat, silakan coba lagi.');
+    } else {
+      error('Gagal memuat data.');
+    }
+  } finally {
+    loading.value = false;
   }
 });
 
@@ -152,7 +155,6 @@ const checkPatient = async () => {
     return;
   }
 
-  // Siapkan params berdasarkan mode yang dipilih
   let searchParams = {};
   if (searchMode.value === 'NIK') {
     searchParams = { NIK: form.norm };
@@ -172,13 +174,9 @@ const checkPatient = async () => {
   try {
     const response = await axios.get('/api/v1/patients/search', { params: searchParams });
     const result = response.data;
-
-    console.log(result);
     
-    
-    if (result.success && result.total > 0) {
-      matchedPatient.value = extractPatientData(result.data[0]); 
-      
+    if (result.total > 0) {
+      matchedPatient.value = extractPatientData(result.data[0]);      
       form.relation = '';
       checked.value = false;
       info('Pasien ditemukan!');
@@ -195,7 +193,6 @@ const checkPatient = async () => {
 
 const onlyNumber = (event) => {
   let val = event.target.value;
-  // Jika NORM atau NIK, hanya boleh angka
   if (searchMode.value !== 'KAP') {
     val = val.replace(/[^0-9]/g, '');
   }
@@ -210,7 +207,9 @@ const isDuplicate = computed(() => {
 })
 
 const extractPatientData = (dataPasien) => {
-  const identitas = dataPasien.KARTUIDENTITAS?.find(k => k.JENIS === '1');
+  const kapCard = dataPasien.KARTUASURANSI?.find(k => k.JENIS == "2");
+  const nikCard = dataPasien.KARTUIDENTITAS?.find(k => k.JENIS == "1" );
+  const contact = dataPasien.KONTAK?.find(k => k.JENIS == "3" );
   
   return {
     name: dataPasien.NAMA,
@@ -218,11 +217,13 @@ const extractPatientData = (dataPasien) => {
     gelar_depan: dataPasien.GELAR_DEPAN,
     gelar_belakang: dataPasien.GELAR_BELAKANG,
     norm: dataPasien.NORM,
-    nik: identitas ? identitas.NOMOR : (dataPasien.NIK || ''),
+    nik: nikCard?.NOMOR,
+    kap: kapCard?.NOMOR,
     birth_date: dataPasien.TANGGAL_LAHIR?.split(' ')[0],
     birth_place: dataPasien.REFERENSI?.TEMPATLAHIR?.DESKRIPSI || dataPasien.TEMPAT_LAHIR,
     gender: dataPasien.REFERENSI?.JENISKELAMIN?.DESKRIPSI || dataPasien.JENIS_KELAMIN,
     religion: dataPasien.REFERENSI?.AGAMA?.DESKRIPSI,
+    contact: contact?.NOMOR,
     address: dataPasien.ALAMAT,
     occupation: dataPasien.REFERENSI?.PEKERJAAN?.DESKRIPSI,
     marital_status: dataPasien.REFERENSI?.STATUS_PERKAWINAN?.DESKRIPSI

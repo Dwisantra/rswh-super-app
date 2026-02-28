@@ -1,5 +1,5 @@
 <template>
-  <header class="relative overflow-hidden bg-gradient-to-br from-teal-600 to-cyan-700 px-4 pb-12 pt-8 text-white shadow-lg">
+  <header class="sticky top-0 z-40 relative overflow-hidden bg-gradient-to-br from-teal-600 to-cyan-700 px-4 pb-8 pt-8 text-white shadow-lg">
     <div class="relative z-10">
       <div class="flex items-center mb-4" :class="urlTo ? 'justify-between' : 'gap-4'">
         <RouterLink v-if="backTo" :to="backTo" class="back-btn">

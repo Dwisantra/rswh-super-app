@@ -1,6 +1,6 @@
 <template>
   <div class="mx-auto min-h-screen max-w-md bg-slate-50 pb-24">
-    <section class="rounded-b-[2rem] bg-gradient-to-br from-teal-600 to-cyan-600 px-4 pb-6 pt-7 text-white shadow-lg">
+    <section class="sticky top-0 z-50 rounded-b-[2rem] bg-gradient-to-br from-teal-600 to-cyan-600 px-4 pb-6 pt-7 text-white shadow-lg">
       <div class="flex items-center gap-3">
         <div class="search-box">
           <font-awesome-icon icon="magnifying-glass" class="search-icon" />
@@ -44,7 +44,7 @@
       </article>
     </section>
 
-    <main class="-mt-3 space-y-4 px-4">
+    <main class="space-y-4 px-4 pt-4">
       <PhotoCarousel :slides="homeBanners" />
 
       <!-- <main class="-mt-3 space-y-4 px-4">
@@ -75,11 +75,40 @@
           </button>
         </div>
         
-        <div class="mt-3 rounded-xl bg-slate-50 p-3">
-          <p class="text-xs text-slate-500">Jadwal terdekat</p>
-          <p class="text-base font-semibold text-slate-800">Tidak ada jadwal</p>
-          <p class="text-sm text-slate-600">Klik daftar untuk buat janji</p>
-        </div>
+        <PullToRefresh v-model="refreshing" @refresh="onRefresh">
+          <div class="mt-3">
+            <CarouselCard :items="schedules">
+              <template #default="{ item }">
+                <div class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm mx-1">
+                  <div class="flex justify-between items-start">
+                    <div class="space-y-1">
+                      <span class="inline-block px-2 py-0.5 rounded-full bg-teal-50 text-[10px] font-bold text-teal-700 uppercase tracking-wider">
+                        Jadwal Terdekat
+                      </span>
+                      <h3 class="text-base font-bold text-slate-800">{{ item.klinik }}</h3>
+                      <p class="text-sm text-slate-600">{{ item.dokter }}</p>
+                      
+                      <div class="flex items-center gap-3 mt-2 text-xs text-slate-500">
+                        <div class="flex items-center gap-1">
+                          <font-awesome-icon icon="calendar" class="text-teal-500" />
+                          <span>{{ item.hari }}</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                          <font-awesome-icon icon="clock" class="text-teal-500" />
+                          <span>{{ item.jam }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400">
+                      <font-awesome-icon icon="chevron-right" />
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </CarouselCard>
+          </div>
+        </PullToRefresh>
       </article>
 
       <PatientSelector 
@@ -111,6 +140,8 @@
 import { computed, onMounted, ref } from 'vue'
 import axios from 'axios'
 import Pusher from 'pusher-js'
+import PullToRefresh from '../components/PullToRefresh.vue'
+import CarouselCard from '../components/CarouselCard.vue'
 import MobileBottomNav from '../components/MobileBottomNav.vue'
 import PhotoCarousel from '../components/PhotoCarousel.vue'
 import ServiceMenuGrid from '../components/ServiceMenuGrid.vue'
@@ -124,6 +155,7 @@ const familyMembers = ref([])
 const activePatient = ref(null)
 const isSelectorOpen = ref(false)
 const notifications = ref([])
+const refreshing = ref(false)
 
 // Config Pusher
 const pusherKey = import.meta.env.VITE_PUSHER_APP_KEY;
@@ -131,6 +163,14 @@ const pusherCluster = import.meta.env.VITE_PUSHER_APP_CLUSTER;
 
 // Notifikasi Logic
 const unreadCount = computed(() => notifications.value.filter(n => n.read_at === null).length)
+
+const onRefresh = async () => {
+  try {
+    await fetchInitialData()
+  } finally {
+    refreshing.value = false
+  }
+}
 
 const fetchInitialData = async () => {
   try {
@@ -170,6 +210,7 @@ const filteredSections = computed(() => {
 
 onMounted(async () => {
   try {
+    fetchSchedules()
     // 1. Load User Profile
     const userRes = await axios.get('/api/v1/me')
     if (userRes.data?.name) displayName.value = userRes.data.name
@@ -198,4 +239,42 @@ onMounted(async () => {
     console.error("Initialization error:", error)
   }
 })
+
+
+// dummy
+const schedules = ref([])
+const loadingSchedules = ref(false)
+const fetchSchedules = async () => {
+  loadingSchedules.value = true
+  
+  // Simulasi loading 1 detik
+  await new Promise(resolve => setTimeout(resolve, 1000))
+
+  // Data Statis
+  schedules.value = [
+    { 
+      id: 1, 
+      klinik: 'Klinik Penyakit Dalam', 
+      dokter: 'dr. Bambang Spesialis PD', 
+      hari: 'Senin', 
+      jam: '08:00 - 12:00' 
+    },
+    { 
+      id: 2, 
+      klinik: 'Klinik Anak (Pediatri)', 
+      dokter: 'dr. Anisa Sp.A', 
+      hari: 'Selasa', 
+      jam: '10:00 - 14:00' 
+    },
+    { 
+      id: 3, 
+      klinik: 'Klinik Gigi & Mulut', 
+      dokter: 'drg. Citra Permata', 
+      hari: 'Rabu', 
+      jam: '13:00 - 16:00' 
+    }
+  ]
+  
+  loadingSchedules.value = false
+}
 </script>

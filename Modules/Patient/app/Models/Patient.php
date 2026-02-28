@@ -14,9 +14,9 @@ class Patient extends Model
      * The attributes that are mass assignable.
      */
     protected $fillable = [
-        'user_id', 'norm', 'nik', 'name', 'panggilan', 'gelar_depan', 
+        'user_id', 'norm', 'nik', 'kap', 'name', 'panggilan', 'gelar_depan', 
         'gelar_belakang', 'birth_date', 'birth_place', 'gender', 
-        'religion', 'address', 'occupation', 'marital_status', 
+        'religion', 'contact', 'address', 'occupation', 'marital_status', 
         'relation', 'is_default'
     ];
 

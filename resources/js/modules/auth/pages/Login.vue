@@ -50,10 +50,8 @@
 
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
 import axios from 'axios'
 
-const router = useRouter()
 const loading = ref(false)
 const googleButtonRef = ref(null)
 const error = ref('')
@@ -158,10 +156,6 @@ onMounted(async () => {
       shape: 'rectangular',
       width: 320
     })
-
-    google.accounts.id.prompt((notification) => {
-      console.log(notification);
-  });
   } catch (_) {
     // SDK gagal dimuat, fallback ke login biasa
   }

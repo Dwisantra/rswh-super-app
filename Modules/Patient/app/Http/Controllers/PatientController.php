@@ -3,13 +3,17 @@
 namespace Modules\Patient\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Modules\Auth\Services\EmailOtpService;
 use Illuminate\Http\Request;
 use Modules\Patient\Models\Patient;
 use Modules\RegOnline\Services\RegOnlineService;
 
 class PatientController extends Controller
 {
-    public function __construct(protected RegOnlineService $regonline) {}
+     public function __construct(
+        protected RegOnlineService $regonline,
+        protected EmailOtpService $emailOtpService,
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -68,6 +72,7 @@ class PatientController extends Controller
             'user_id' => $user_id,
             'norm' => $request->norm,
             'nik' => $request->nik,
+            'kap' => $request->kap,
             'name'  => $request->name,
             'panggilan' => $request->panggilan,
             'gelar_depan' => $request->gelar_depan,
@@ -76,6 +81,7 @@ class PatientController extends Controller
             'birth_place' => $request->birth_place,
             'gender' => $request->gender,
             'religion' => $request->religion,
+            'contact' => $request->contact,
             'address' => $request->address,
             'occupation' => $request->occupation,
             'marital_status' => $request->marital_status,
@@ -157,6 +163,89 @@ class PatientController extends Controller
         } catch (\Exception $e) {
             return $this->apiResponse(null, 500, false);
         }
+    }
+
+    public function profile(Request $request)
+    {
+        $user = $request->user();
+
+        $defaultPatient = Patient::where('user_id', $user->id)
+            ->orderBy('is_default', 'desc')
+            ->latest('id')
+            ->first();
+
+        $kapNumber = $defaultPatient?->kap
+            ?? Patient::where('user_id', $user->id)
+                ->whereNotNull('kap')
+                ->where('kap', '!=', '')
+                ->value('kap');
+
+        return response()->json([
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'nik' => $user->nik,
+            'norm' => $user->norm,
+            'kap' => $kapNumber,
+            'patient' => $defaultPatient,
+        ]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $validated = $request->validate([
+            'phone' => 'nullable|string|max:32',
+            'email' => 'nullable|string|email|max:255|unique:users,email,'.$request->user()->id,
+            'email_otp' => 'nullable|string|size:6',
+            'kap' => 'nullable|string|max:32',
+        ]);
+
+        $user = $request->user();
+
+        if (!empty($validated['email'])
+            && $validated['email'] !== $user->email
+            && empty($validated['email_otp'])) {
+            return response()->json([
+                'message' => 'OTP email wajib diisi untuk perubahan email.',
+                'errors' => [
+                    'email_otp' => ['OTP email wajib diisi untuk perubahan email.'],
+                ],
+            ], 422);
+        }
+
+        if (!empty($validated['email']) && $validated['email'] !== $user->email) {
+            if (! $this->emailOtpService->verify('profile_update:'.$user->id, $validated['email'], $validated['email_otp'])) {
+                return response()->json([
+                    'message' => 'Kode OTP email tidak valid atau sudah kedaluwarsa.',
+                    'errors' => [
+                        'email_otp' => ['Kode OTP email tidak valid atau sudah kedaluwarsa.'],
+                    ],
+                ], 422);
+            }
+
+            $user->email = $validated['email'];
+            $this->emailOtpService->forget('profile_update:'.$user->id, $validated['email']);
+        }
+
+        if (array_key_exists('phone', $validated)) {
+            $user->phone = $validated['phone'];
+        }
+
+        $user->save();
+
+        if (array_key_exists('kap', $validated)) {
+            $patient = Patient::where('user_id', $user->id)
+                ->orderBy('is_default', 'desc')
+                ->latest('id')
+                ->first();
+
+            if ($patient) {
+                $patient->kap = $validated['kap'];
+                $patient->save();
+            }
+        }
+
+        return $this->profile($request);
     }
 
     public function shdk(Request $request)

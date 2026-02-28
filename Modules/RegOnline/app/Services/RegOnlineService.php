@@ -200,4 +200,78 @@ class RegOnlineService
             ];
         }
     }
+
+    public function getClinic(User $user): array
+    {
+        try {
+            $response = Http::withHeaders($this->headers($user))
+                ->timeout((int) config('regonline.timeout', 15))
+                ->get($this->url . '/registrasionline/plugins/getRuangan');
+
+            if ($response->successful()) {
+                return Arr::get($response->json(), 'response.data', $response->json());
+            }
+
+            return [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ];
+        } catch (ConnectionException) {
+            return [
+                'status' => 500,
+                'body' => json_encode(['message' => 'Gagal koneksi ke SIMRS: ' . $e->getMessage()])
+            ];
+        }
+    }
+
+    public function getDoctorScheduleByClinic(User $user, string $poliCode, int $dayCode): array
+    {
+        try {
+            $response = Http::withHeaders($this->headers($user))
+                ->timeout((int) config('regonline.timeout', 15))
+                ->get($this->url . '/registrasionline/jadwaldokterhfis', [
+                    'POLI' => $poliCode,
+                    'KODE_HARI' => $dayCode,
+                ]);
+
+            if ($response->successful()) {
+                return Arr::get($response->json(), 'response.data', $response->json());
+            }
+
+            return [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ];
+        } catch (ConnectionException) {
+            return [
+                'status' => 500,
+                'body' => json_encode(['message' => 'Gagal koneksi ke SIMRS: ' . $e->getMessage()])
+            ];
+        }
+    }
+
+    public function getPaymentMethods(User $user, ?string $ruanganPenjamin = null): array
+    {
+        $query = [];
+        if ($ruanganPenjamin) {
+            $query['RUANGAN_PENJAMIN'] = $ruanganPenjamin;
+        }
+
+        try {
+            $response = Http::withHeaders($this->headers($user))
+                ->timeout((int) config('regonline.timeout', 15))
+                ->get($this->url . '/registrasionline/plugins/getCaraBayar', $query);
+
+            if ($response->successful()) {
+                return Arr::get($response->json(), 'response.data', $response->json());
+            }
+
+            return [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ];
+        } catch (ConnectionException) {
+            return [];
+        }
+    }
 }

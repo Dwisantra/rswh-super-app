@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id');
             $table->string('norm')->index();
             $table->string('nik')->nullable();
+            $table->string('kap', 32)->nullable();
             $table->string('name');
             $table->string('panggilan')->nullable();
             $table->string('gelar_depan')->nullable();
@@ -24,6 +25,7 @@ return new class extends Migration
             $table->string('birth_place')->nullable();
             $table->string('gender')->nullable();
             $table->string('religion')->nullable();
+            $table->string('contact')->nullable();
             $table->string('address')->nullable();
             $table->string('occupation')->nullable();
             $table->string('marital_status')->nullable();
